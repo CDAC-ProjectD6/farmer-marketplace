@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      
+      <h1>Welcome to Farmer Marketplace</h1>
     </>
   )
 }
