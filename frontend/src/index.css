@@ -1,4 +1,6 @@
-
+@import "./styles/variable.css";
+@import "./styles/global.css";
+@import "./styles/typography.css";
 * {
   margin: 0;
   padding: 0;

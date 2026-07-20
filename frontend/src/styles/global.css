@@ -1,0 +1,71 @@
+/* Import project variables */
+/*@import "./variables.css";*/
+
+/* ===========================
+   Global Reset
+=========================== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   HTML & Body
+=========================== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===========================
+   Images
+=========================== */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ===========================
+   Links
+=========================== */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===========================
+   Lists
+=========================== */
+ul,
+ol {
+    list-style: none;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* ===========================
+   Form Elements
+=========================== */
+input,
+textarea,
+select,
+button {
+    font: inherit;
+}

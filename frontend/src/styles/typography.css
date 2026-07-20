@@ -1,0 +1,68 @@
+/* Import Variables */
+/* @import "./variables.css"; */
+
+/* ===========================
+   Headings
+=========================== */
+
+h1,
+.h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+h2,
+.h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.875rem;
+}
+
+h3,
+.h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+h4,
+.h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+/* ===========================
+   Paragraph
+=========================== */
+
+p {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+/* ===========================
+   Small Text
+=========================== */
+
+small,
+.small {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* ===========================
+   Labels
+=========================== */
+
+label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
