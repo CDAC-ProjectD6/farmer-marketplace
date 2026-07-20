@@ -5,18 +5,15 @@ import Footer from "../components/layout/Footer";
 function MainLayout() {
   return (
     <>
-      {/* Navbar will come here */}
-      <Navbar/>
+      <Navbar />
 
-      <main>
+      <main className="container my-4">
         <Outlet />
       </main>
 
-      {/* Footer will come here */}
-      <Footer/>
+      <Footer />
     </>
   );
 }
-
 
 export default MainLayout;
