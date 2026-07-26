@@ -10,6 +10,7 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact";
 import Cart from "../pages/customer/Cart";
 import Wishlist from "../pages/customer/Wishlist";
+import CategoryList from "../pages/admin/CategoryList";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -23,6 +24,7 @@ function AppRoutes() {
         <Route path="products" element={<Products />} />
         <Route path="products/:id" element={<ProductDetails />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="category-management" element={<CategoryList />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="cart" element={<Cart />} />

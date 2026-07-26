@@ -1,9 +1,6 @@
 package com.cdac.farmermarketplace.entity;
 
-import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -23,11 +20,11 @@ import lombok.Setter;
 @AttributeOverrides({
     @AttributeOverride(
         name = "createdAt",
-        column = @Column(name = "order_created_at")
+        column = @Column(name = "cart_created_at")
     ),
     @AttributeOverride(
         name = "updatedAt",
-        column = @Column(name = "order_updated_at")
+        column = @Column(name = "cart_updated_at")
     )
 })
 @Getter
