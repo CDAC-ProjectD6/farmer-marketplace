@@ -1,12 +1,70 @@
 import CategoryTable from "../../components/Category/CategoryTable";
 import mockCategories from "../../data/mockCategories";
+import CategoryModal from "../../components/Category/CategoryModal";
 
 import { useState } from "react";
+
 function CategoryList() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [sortBy, setSortBy] = useState("Default");
-    const filteredCategories = mockCategories.filter((category) => {
+    const [showModal, setShowModal] = useState(false);
+    const [categories, setCategories] = useState(mockCategories);
+    const [editingCategory, setEditingCategory] = useState(null);
+
+    const handleAddCategory = (newCategory) =>{
+        if (editingCategory) {
+        handleUpdateCategory(newCategory);
+        return;
+    }
+       const categoryWithId = {
+        ...newCategory, id: Date.now()
+       };
+
+       setCategories([
+        ...categories, categoryWithId
+       ]);
+
+       setShowModal(false);
+    };
+
+    const handleEditCategory = (category) => {
+        setEditingCategory(category);
+        setShowModal(true);
+    };
+
+    const handleUpdateCategory = (updateCategory) => {
+        const updatedCategories = categories.map((category) => 
+        category.id === updateCategory.id ? updateCategory : category
+    );
+    setCategories(updatedCategories);
+    setEditingCategory(null);
+    setShowModal(false);
+    }
+
+    const handleToggleStatus = (id) => {
+         const confirmAction = window.confirm(
+        "Are you sure you want to change the category status?"
+    );
+
+    if (!confirmAction) return;
+
+
+    const updatedCategories = categories.map((category) =>
+        category.id === id
+            ? {
+                ...category,
+                status: category.status === "Active"
+                    ? "Inactive"
+                    : "Active"
+            }
+            : category
+    );
+
+    setCategories(updatedCategories);
+};
+
+    const filteredCategories = categories.filter((category) => {
         const matchesSearch = category.name
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
@@ -28,7 +86,7 @@ function CategoryList() {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="fw-bold mb-0">Category Management</h2>
 
-                <button className="btn btn-success">
+                <button className="btn btn-success" onClick ={() => setShowModal(true)}>
                     + Add Category
                 </button>
             </div>
@@ -99,7 +157,11 @@ function CategoryList() {
 
             </div>
             {sortedCategories.length > 0 ? (
-                <CategoryTable categories={sortedCategories} />
+                <CategoryTable 
+                categories={sortedCategories}
+                onEdit = {handleEditCategory} 
+                onToggleStatus={handleToggleStatus}
+                />
             ) : (
                 <div className="alert alert-info text-center">
                     <h5>No categories found</h5>
@@ -108,6 +170,13 @@ function CategoryList() {
                     </p>
                 </div>
             )}
+
+            <CategoryModal 
+                showModal={showModal}
+                onClose={()=> setShowModal(false)}
+                onSave={handleAddCategory}
+                editingCategory={editingCategory}
+                />
         </div>
     );
 }

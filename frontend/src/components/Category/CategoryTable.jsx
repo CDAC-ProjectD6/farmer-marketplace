@@ -1,4 +1,4 @@
-function CategoryTable({ categories }) {
+function CategoryTable({ categories, onEdit, onToggleStatus }) {
     return (
         <div className="table-responsive">
             <table className="table table-bordered table-hover align-middle shadow-sm">
@@ -11,29 +11,38 @@ function CategoryTable({ categories }) {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                    <tbody>
-                        {categories.map((category) => (
-                            <tr key={category.id}>
-                                <td>{category.id}</td>
-                                <td>{category.name}</td>
-                                <td>{category.description}</td>
-                                <td className="text-center">{category.status === "Active" ?(
+                <tbody>
+                    {categories.map((category) => (
+                        <tr key={category.id}>
+                            <td>{category.id}</td>
+                            <td>{category.name}</td>
+                            <td>{category.description}</td>
+                            <td className="text-center">{category.status === "Active" ? (
                                 <span className="badge bg-success">Active</span>) : (
-                                    <span className="badge bg-danger">Inactive</span>
-                                )}
-                                </td>
-                                <td>
-                                    <button className="btn btn-warning btn-sm me-2">
-                                        Edit
-                                    </button>
+                                <span className="badge bg-danger">Inactive</span>
+                            )}
+                            </td>
+                            <td>
+                                <button className="btn btn-warning btn-sm me-2"
+                                    onClick={() => onEdit(category)}>
+                                    Edit
+                                </button>
 
-                                    <button className="btn btn-danger btn-sm">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
+                                <button
+                                    className={`btn btn-sm ${category.status === "Active"
+                                            ? "btn-danger"
+                                            : "btn-success"
+                                        }`}
+                                    onClick={() => onToggleStatus(category.id)}
+                                >
+                                    {category.status === "Active"
+                                        ? "Deactivate"
+                                        : "Activate"}
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </div>
     );
