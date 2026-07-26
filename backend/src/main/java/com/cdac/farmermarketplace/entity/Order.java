@@ -1,12 +1,10 @@
 package com.cdac.farmermarketplace.entity;
 
+import com.cdac.farmermarketplace.enums.OrderStatus;
+import com.cdac.farmermarketplace.enums.PaymentMethod;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import com.cdac.farmermarketplace.enums.OrderStatus;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -25,6 +23,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @AttributeOverrides({
     @AttributeOverride(
         name = "createdAt",
@@ -35,35 +37,42 @@ import lombok.Setter;
         column = @Column(name = "order_updated_at")
     )
 })
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
     private Long orderId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal tax;
+
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
+
+    @Column(name = "shipping_address", nullable = false)
+    private String shippingAddress;
+
+    @Column(nullable = false, length = 6)
+    private String pincode;
+
+    @Column(nullable = false, length = 10)
+    private String mobile;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
-    @Column(name = "shipping_address", nullable = false)
-    private String shippingAddress;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(name = "order_date", nullable = false)
+    private LocalDateTime orderDate;
 }

@@ -1,7 +1,5 @@
 package com.cdac.farmermarketplace.entity;
 
-
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -17,6 +15,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "cart")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @AttributeOverrides({
     @AttributeOverride(
         name = "createdAt",
@@ -27,15 +29,13 @@ import lombok.Setter;
         column = @Column(name = "cart_updated_at")
     )
 })
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Cart extends BaseEntity{
+public class Cart extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long cartId;
-	private Long userId;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cart_id")
+    private Long cartId;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }

@@ -7,13 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemResponse {
-
-    private Long orderItemId;
 
     private Long productId;
 
@@ -21,5 +19,5 @@ public class OrderItemResponse {
 
     private BigDecimal price;
 
-    private BigDecimal subtotal;
+    private BigDecimal totalPrice;
 }

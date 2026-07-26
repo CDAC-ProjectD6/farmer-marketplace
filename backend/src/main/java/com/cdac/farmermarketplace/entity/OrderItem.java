@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +23,7 @@ public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_item_id")
     private Long orderItemId;
 
     @Column(name = "order_id", nullable = false)
@@ -32,13 +32,12 @@ public class OrderItem {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Min(1)
     @Column(nullable = false)
     private Integer quantity;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "sub_total", nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotal;
+    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalPrice;
 }

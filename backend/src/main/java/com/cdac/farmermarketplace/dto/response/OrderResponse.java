@@ -13,17 +13,29 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderResponse {
 
     private Long orderId;
 
     private Long userId;
 
+    private BigDecimal subtotal;
+
+    private BigDecimal tax;
+
     private BigDecimal totalAmount;
 
+    private String shippingAddress;
+
+    private String pincode;
+
+    private String mobile;
+
     private OrderStatus status;
+
+    private String paymentMethod;
 
     private LocalDateTime orderDate;
 

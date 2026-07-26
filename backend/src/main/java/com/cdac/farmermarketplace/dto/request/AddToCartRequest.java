@@ -9,8 +9,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class AddToCartRequest {
 
     @NotNull(message = "User Id is required")
@@ -20,6 +20,6 @@ public class AddToCartRequest {
     private Long productId;
 
     @NotNull(message = "Quantity is required")
-    @Min(value = 1, message = "Quantity must be at least 1")
+    @Min(value = 1, message = "Quantity must be greater than zero")
     private Integer quantity;
 }

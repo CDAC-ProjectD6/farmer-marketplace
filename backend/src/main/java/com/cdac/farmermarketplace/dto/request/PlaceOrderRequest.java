@@ -1,5 +1,6 @@
 package com.cdac.farmermarketplace.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,16 +9,22 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PlaceOrderRequest {
 
     @NotNull(message = "User Id is required")
     private Long userId;
 
-    @NotNull(message = "Shipping Address is required")
+    @NotBlank(message = "Shipping Address is required")
     private String shippingAddress;
 
-    @NotNull(message = "Payment Method is required")
+    @NotBlank(message = "Pincode is required")
+    private String pincode;
+
+    @NotBlank(message = "Mobile Number is required")
+    private String mobile;
+
+    @NotBlank(message = "Payment Method is required")
     private String paymentMethod;
 }

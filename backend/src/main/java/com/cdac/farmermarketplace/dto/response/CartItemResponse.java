@@ -21,5 +21,5 @@ public class CartItemResponse {
 
     private BigDecimal price;
 
-    private BigDecimal subtotal;
+    private BigDecimal totalPrice;
 }

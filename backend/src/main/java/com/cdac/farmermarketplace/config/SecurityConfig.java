@@ -9,14 +9,20 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
+            .csrf(csrf -> csrf.disable())      // <-- IMPORTANT
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/health").permitAll()
+                .requestMatchers(
+                        "/api/health",
+                        "/api/cart/**",
+                        "/api/orders/**",
+                        "/api/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             );
 
         return http.build();
     }
 }
-
