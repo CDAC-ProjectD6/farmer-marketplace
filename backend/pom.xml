@@ -83,6 +83,37 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+<!--		JWT  dependencies       -->
+
+			<dependency>
+			    <groupId>io.jsonwebtoken</groupId>
+			    <artifactId>jjwt-api</artifactId>
+			    <version>0.13.0</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>io.jsonwebtoken</groupId>
+			    <artifactId>jjwt-impl</artifactId>
+			    <version>0.13.0</version>
+			    <scope>runtime</scope>
+			</dependency>
+			
+			<dependency>
+			    <groupId>io.jsonwebtoken</groupId>
+			    <artifactId>jjwt-jackson</artifactId>
+			    <version>0.13.0</version>
+			    <scope>runtime</scope>
+			</dependency>
+			
+			
+<!--			Spring Boot mail support                 -->
+
+			<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+				
 	</dependencies>
 
 	<build>
