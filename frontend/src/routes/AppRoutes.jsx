@@ -20,6 +20,7 @@ import CategoryList from "../pages/admin/CategoryList";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -32,8 +33,14 @@ function AppRoutes() {
         <Route path="products/:id" element={<ProductDetails />} />
 
         <Route path="categories" element={<Categories />} />
-        <Route path="category-management" element={<CategoryList />} />
-
+        <Route
+          path="category-management"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <CategoryList />
+            </ProtectedRoute>
+          }
+        />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
 

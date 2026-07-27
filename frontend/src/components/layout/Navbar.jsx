@@ -1,13 +1,30 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const {
+    user,
+    logout,
+    isAuthenticated
+  } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-success">
       <div className="container">
+
+        {/* Logo */}
         <Link className="navbar-brand fw-bold" to="/">
           🌾 FarmHub
         </Link>
 
+        {/* Mobile Toggle */}
         <button
           className="navbar-toggler"
           type="button"
@@ -20,56 +37,96 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div
+          className="collapse navbar-collapse"
+          id="navbarNav"
+        >
+
+          {/* Left Navigation */}
           <ul className="navbar-nav me-auto">
+
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
+              <Link className="nav-link" to="/">
                 Home
               </Link>
             </li>
+
             <li className="nav-item">
               <Link className="nav-link" to="/products">
                 Products
               </Link>
             </li>
+
             <li className="nav-item">
               <Link className="nav-link" to="/categories">
                 Categories
               </Link>
             </li>
+
             <li className="nav-item">
               <Link className="nav-link" to="/about">
                 About
               </Link>
             </li>
+
             <li className="nav-item">
               <Link className="nav-link" to="/contact">
                 Contact
               </Link>
             </li>
+
           </ul>
 
+          {/* Right Side */}
           <div className="d-flex align-items-center">
-            <form className="d-flex me-3">
+
+            {/* Search */}
+            <form
+              className="d-flex me-3"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <input
                 className="form-control"
                 type="search"
                 placeholder="Search products..."
+                aria-label="Search products"
               />
             </form>
-            <Link
-            className="btn btn-outline-light me-2"
-            to="/login"
-          >
-            Login
-          </Link>
 
-          <Link
-            className="btn btn-warning"
-            to="/register"
-          >
-            Register
-          </Link>
+            {/* NOT LOGGED IN */}
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  className="btn btn-outline-light me-2"
+                  to="/login"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  className="btn btn-warning"
+                  to="/register"
+                >
+                  Register
+                </Link>
+              </>
+            ) : (
+              /* LOGGED IN */
+              <>
+                <span className="text-white me-3">
+                  Hi, {user?.name}
+                </span>
+
+                <button
+                  type="button"
+                  className="btn btn-outline-light"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </>
+            )}
+
           </div>
         </div>
       </div>
