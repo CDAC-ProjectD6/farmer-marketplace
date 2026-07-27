@@ -13,29 +13,38 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex){
+    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
 
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
         response.put("timestamp", LocalDateTime.now());
-        response.put("status",404);
-        response.put("message",ex.getMessage());
+        response.put("status", 404);
+        response.put("message", ex.getMessage());
 
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
-
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handleBadRequest(BadRequestException ex){
+    public ResponseEntity<?> handleBadRequest(BadRequestException ex) {
 
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
         response.put("timestamp", LocalDateTime.now());
-        response.put("status",400);
-        response.put("message",ex.getMessage());
+        response.put("status", 400);
+        response.put("message", ex.getMessage());
 
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntimeException(
+            RuntimeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "message",
+                        exception.getMessage()
+                ));
+    }
 }
