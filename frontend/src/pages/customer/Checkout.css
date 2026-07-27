@@ -1,0 +1,29 @@
+.checkout-form{
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+}
+
+.payment-section{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+.payment-section select{
+
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+
+}
+
+.checkout-form button{
+
+    width:100%;
+
+}

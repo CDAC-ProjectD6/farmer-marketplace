@@ -1,0 +1,28 @@
+.cart-summary{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.cart-summary h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:16px;
+}
+
+.summary-row.total{
+    font-size:20px;
+    font-weight:700;
+    color:var(--primary-color);
+}
+
+.cart-summary button{
+    width:100%;
+    margin-top:10px;
+}

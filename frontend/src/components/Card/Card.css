@@ -1,0 +1,32 @@
+.custom-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all .3s ease;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.custom-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-header-custom {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #ececec;
+}
+
+.card-header-custom h4 {
+    margin: 0;
+}
+
+.card-body-custom {
+    padding: 1.25rem;
+}
+
+.card-footer-custom {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid #ececec;
+    background: #fafafa;
+}

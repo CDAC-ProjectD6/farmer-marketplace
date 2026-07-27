@@ -1,0 +1,40 @@
+.cart-layout{
+
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:30px;
+
+}
+
+.cart-items{
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+}
+
+.cart-summary-section{
+
+    position:sticky;
+    top:20px;
+    height:fit-content;
+
+}
+
+.empty-cart{
+
+    text-align:center;
+    padding:80px 0;
+
+}
+
+@media(max-width:992px){
+
+    .cart-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
