@@ -22,28 +22,49 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // =========================
+    // Place Order
+    // =========================
     @PostMapping("/place")
     public ResponseEntity<OrderResponse> placeOrder(
             @Valid @RequestBody PlaceOrderRequest request) {
 
-        return new ResponseEntity<>(
-                orderService.placeOrder(request),
-                HttpStatus.CREATED);
+        OrderResponse response = orderService.placeOrder(request);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // =========================
+    // Get Order By Id
+    // =========================
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrder(
+    public ResponseEntity<OrderResponse> getOrderById(
             @PathVariable Long orderId) {
 
         return ResponseEntity.ok(
                 orderService.getOrderById(orderId));
     }
 
+    // =========================
+    // Get All Orders Of User
+    // =========================
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByUser(
+    public ResponseEntity<List<OrderResponse>> getOrdersByUserId(
             @PathVariable Long userId) {
 
         return ResponseEntity.ok(
                 orderService.getOrdersByUserId(userId));
+    }
+
+    // =========================
+    // Cancel Order
+    // =========================
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<String> cancelOrder(
+            @PathVariable Long orderId) {
+
+        orderService.cancelOrder(orderId);
+
+        return ResponseEntity.ok("Order Cancelled Successfully");
     }
 }

@@ -68,7 +68,8 @@ public class OrderServiceImpl implements OrderService {
         order.setPincode(request.getPincode());
         order.setMobile(request.getMobile());
         order.setStatus(OrderStatus.PENDING);
-        order.setPaymentMethod(PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase()));
+        order.setPaymentMethod(
+                PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase()));
         order.setOrderDate(LocalDateTime.now());
 
         order = orderRepository.save(order);
@@ -87,11 +88,12 @@ public class OrderServiceImpl implements OrderService {
 
             orderItemRepository.save(orderItem);
 
-            responseItems.add(new OrderItemResponse(
-                    orderItem.getProductId(),
-                    orderItem.getQuantity(),
-                    orderItem.getPrice(),
-                    orderItem.getTotalPrice()));
+            responseItems.add(
+                    new OrderItemResponse(
+                            orderItem.getProductId(),
+                            orderItem.getQuantity(),
+                            orderItem.getPrice(),
+                            orderItem.getTotalPrice()));
         }
 
         cartItemRepository.deleteByCartId(cart.getCartId());
@@ -124,11 +126,12 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem item : items) {
 
-            responseItems.add(new OrderItemResponse(
-                    item.getProductId(),
-                    item.getQuantity(),
-                    item.getPrice(),
-                    item.getTotalPrice()));
+            responseItems.add(
+                    new OrderItemResponse(
+                            item.getProductId(),
+                            item.getQuantity(),
+                            item.getPrice(),
+                            item.getTotalPrice()));
         }
 
         return new OrderResponse(
@@ -156,34 +159,56 @@ public class OrderServiceImpl implements OrderService {
 
         for (Order order : orders) {
 
-            List<OrderItem> items = orderItemRepository.findByOrderId(order.getOrderId());
+            List<OrderItem> items =
+                    orderItemRepository.findByOrderId(order.getOrderId());
 
             List<OrderItemResponse> responseItems = new ArrayList<>();
 
             for (OrderItem item : items) {
 
-                responseItems.add(new OrderItemResponse(
-                        item.getProductId(),
-                        item.getQuantity(),
-                        item.getPrice(),
-                        item.getTotalPrice()));
+                responseItems.add(
+                        new OrderItemResponse(
+                                item.getProductId(),
+                                item.getQuantity(),
+                                item.getPrice(),
+                                item.getTotalPrice()));
             }
 
-            responses.add(new OrderResponse(
-                    order.getOrderId(),
-                    order.getUserId(),
-                    order.getSubtotal(),
-                    order.getTax(),
-                    order.getTotalAmount(),
-                    order.getShippingAddress(),
-                    order.getPincode(),
-                    order.getMobile(),
-                    order.getStatus(),
-                    order.getPaymentMethod().name(),
-                    order.getOrderDate(),
-                    responseItems));
+            responses.add(
+                    new OrderResponse(
+                            order.getOrderId(),
+                            order.getUserId(),
+                            order.getSubtotal(),
+                            order.getTax(),
+                            order.getTotalAmount(),
+                            order.getShippingAddress(),
+                            order.getPincode(),
+                            order.getMobile(),
+                            order.getStatus(),
+                            order.getPaymentMethod().name(),
+                            order.getOrderDate(),
+                            responseItems));
         }
 
         return responses;
+    }
+
+    @Override
+    public void cancelOrder(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException("Order is already cancelled");
+        }
+
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            throw new BadRequestException("Delivered order cannot be cancelled");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+
+        orderRepository.save(order);
     }
 }
