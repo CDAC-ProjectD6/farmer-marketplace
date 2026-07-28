@@ -35,34 +35,27 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
 
         http
-            // Enable CORS
             .cors(cors -> {})
-
-            // JWT API is stateless, so CSRF is disabled
             .csrf(csrf -> csrf.disable())
 
-            // Handle 401 and 403 errors
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
 
-            // Do not create HTTP sessions
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS
                 )
             )
 
-            // Endpoint authorization
             .authorizeHttpRequests(auth -> auth
 
-                // ================= PUBLIC AUTH ENDPOINTS =================
-
+                // Public endpoints
                 .requestMatchers(
                     "/api/health",
                     "/api/auth/register",
@@ -74,27 +67,21 @@ public class SecurityConfig {
                     "/error"
                 ).permitAll()
 
-                // ================= PUBLIC PRODUCT ENDPOINTS =================
-
-                // Anyone can browse/view products
+                // Public product APIs
                 .requestMatchers(
                     HttpMethod.GET,
                     "/api/products/**"
                 ).permitAll()
 
-                // Anyone can view product images
                 .requestMatchers(
                     HttpMethod.GET,
                     "/api/product-images/**"
                 ).permitAll()
 
-                // ================= PROTECTED ENDPOINTS =================
-
-                // All remaining endpoints require authentication
+                // Everything else requires authentication
                 .anyRequest().authenticated()
             )
 
-            // JWT filter runs before Spring's username/password filter
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
@@ -103,28 +90,22 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ================= PASSWORD ENCODER =================
-
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
     }
 
-    // ================= CORS CONFIGURATION =================
-
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        // React/Vite frontend
         configuration.setAllowedOrigins(
                 List.of("http://localhost:5173")
         );
 
-        // HTTP methods allowed from frontend
         configuration.setAllowedMethods(
                 List.of(
                     "GET",
@@ -136,12 +117,10 @@ public class SecurityConfig {
                 )
         );
 
-        // Allow request headers such as Authorization
         configuration.setAllowedHeaders(
                 List.of("*")
         );
 
-        // Allow credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
