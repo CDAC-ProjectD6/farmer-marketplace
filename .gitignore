@@ -1,6 +1,7 @@
 # Eclipse
 .metadata/
 backend/.metadata/
+.metadata_old/
 
 # IDE
 .idea/
