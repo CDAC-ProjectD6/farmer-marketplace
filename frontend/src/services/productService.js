@@ -1,4 +1,4 @@
-import api from "./api"; // adjust the path if your api.js is in a different folder
+import api from "./api";
 
 export const getAllProducts = async () => {
   const response = await api.get("/products");
@@ -7,5 +7,11 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   const response = await api.get(`/products/${id}`);
+  return response.data;
+};
+
+// Products that are active and available for purchase
+export const getAvailableProducts = async () => {
+  const response = await api.get("/products/available");
   return response.data;
 };

@@ -1,8 +1,6 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.security.SecureRandom;
-import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
-
 import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,19 +51,23 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterRequest request) {
 
-//    	System.out.println("Admin Email = " + adminEmail);
-//    	System.out.println("Exists = " + userRepository.existsByEmail(adminEmail));
-    	
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already registered");
+            throw new RuntimeException(
+                    "Email is already registered"
+            );
         }
 
         if (userRepository.existsByMobile(request.getMobile())) {
-            throw new RuntimeException("Mobile number is already registered");
+            throw new RuntimeException(
+                    "Mobile number is already registered"
+            );
         }
 
+        // Admin cannot register using public registration
         if (request.getRole() == Role.ADMIN) {
-            throw new RuntimeException("Admin registration is not allowed");
+            throw new RuntimeException(
+                    "Admin registration is not allowed"
+            );
         }
 
         User user = new User();
@@ -75,24 +77,20 @@ public class AuthServiceImpl implements AuthService {
         user.setMobile(request.getMobile());
 
         user.setPassword(
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(
+                        request.getPassword()
+                )
         );
 
         user.setRole(request.getRole());
         user.setActive(true);
 
-<<<<<<< HEAD
+        // New farmers require admin approval
         if (request.getRole() == Role.FARMER) {
-        	user.setApprovalStatus(FarmerApprovalStatus.PENDING);
-        } else {
-        	user.setApprovalStatus(FarmerApprovalStatus.APPROVED);
-=======
-        // New farmers must be approved by Admin
-        if (request.getRole() == Role.FARMER) {
+
             user.setFarmerApprovalStatus(
                     FarmerApprovalStatus.PENDING
             );
->>>>>>> develop
         }
 
         userRepository.save(user);
@@ -103,22 +101,31 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new RuntimeException("Invalid email or password"));
+                        new RuntimeException(
+                                "Invalid email or password"
+                        )
+                );
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword())) {
 
-            throw new RuntimeException("Invalid email or password");
+            throw new RuntimeException(
+                    "Invalid email or password"
+            );
         }
 
         if (!user.isActive()) {
-            throw new RuntimeException("User account is inactive");
+
+            throw new RuntimeException(
+                    "User account is inactive"
+            );
         }
 
-        // Check farmer approval before generating tokens
+        // Check farmer approval before login
         validateFarmerApproval(user);
 
         String accessToken =
@@ -140,27 +147,41 @@ public class AuthServiceImpl implements AuthService {
     // ==================== REFRESH TOKEN ====================
 
     @Override
-    public LoginResponse refreshToken(RefreshTokenRequest request) {
+    public LoginResponse refreshToken(
+            RefreshTokenRequest request) {
 
-        String refreshToken = request.getRefreshToken();
+        String refreshToken =
+                request.getRefreshToken();
 
-        if (!jwtService.isRefreshTokenValid(refreshToken)) {
+        if (!jwtService.isRefreshTokenValid(
+                refreshToken)) {
+
             throw new RuntimeException(
                     "Invalid or expired refresh token"
             );
         }
 
-        String email = jwtService.extractEmail(refreshToken);
+        String email =
+                jwtService.extractEmail(
+                        refreshToken
+                );
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository
+                .findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new RuntimeException(
+                                "User not found"
+                        )
+                );
 
         if (!user.isActive()) {
-            throw new RuntimeException("User account is inactive");
+
+            throw new RuntimeException(
+                    "User account is inactive"
+            );
         }
 
-        // Prevent rejected/pending farmers from refreshing tokens
+        // Pending/rejected farmers cannot refresh token
         validateFarmerApproval(user);
 
         String newAccessToken =
@@ -181,9 +202,10 @@ public class AuthServiceImpl implements AuthService {
 
     // ==================== FARMER APPROVAL VALIDATION ====================
 
-    private void validateFarmerApproval(User user) {
+    private void validateFarmerApproval(
+            User user) {
 
-        // Only FARMER accounts need approval
+        // Only FARMER accounts require approval
         if (user.getRole() != Role.FARMER) {
             return;
         }
@@ -191,15 +213,17 @@ public class AuthServiceImpl implements AuthService {
         FarmerApprovalStatus approvalStatus =
                 user.getFarmerApprovalStatus();
 
-        if (approvalStatus == null ||
-                approvalStatus == FarmerApprovalStatus.PENDING) {
+        if (approvalStatus == null
+                || approvalStatus ==
+                FarmerApprovalStatus.PENDING) {
 
             throw new RuntimeException(
                     "Your farmer account is pending admin approval"
             );
         }
 
-        if (approvalStatus == FarmerApprovalStatus.REJECTED) {
+        if (approvalStatus ==
+                FarmerApprovalStatus.REJECTED) {
 
             throw new RuntimeException(
                     "Your farmer registration has been rejected"
@@ -210,13 +234,19 @@ public class AuthServiceImpl implements AuthService {
     // ==================== FORGOT PASSWORD ====================
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request) {
+    public void forgotPassword(
+            ForgotPasswordRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new RuntimeException(
+                                "User not found"
+                        )
+                );
 
-        SecureRandom random = new SecureRandom();
+        SecureRandom random =
+                new SecureRandom();
 
         String otp = String.format(
                 "%06d",
@@ -229,13 +259,16 @@ public class AuthServiceImpl implements AuthService {
         resetToken.setUser(user);
         resetToken.setOtp(otp);
 
+        // OTP valid for 5 minutes
         resetToken.setExpiresAt(
-                LocalDateTime.now().plusMinutes(5)
+                LocalDateTime.now()
+                        .plusMinutes(5)
         );
 
         resetToken.setUsed(false);
 
-        passwordResetTokenRepository.save(resetToken);
+        passwordResetTokenRepository
+                .save(resetToken);
 
         emailService.sendPasswordResetOtp(
                 user.getEmail(),
@@ -246,48 +279,84 @@ public class AuthServiceImpl implements AuthService {
     // ==================== VERIFY OTP ====================
 
     @Override
-    public void verifyOtp(VerifyOtpRequest request) {
+    public void verifyOtp(
+            VerifyOtpRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new RuntimeException(
+                                "User not found"
+                        )
+                );
 
         PasswordResetToken resetToken =
                 passwordResetTokenRepository
-                        .findTopByUserAndUsedFalseOrderByCreatedAtDesc(user)
+                        .findTopByUserAndUsedFalseOrderByCreatedAtDesc(
+                                user
+                        )
                         .orElseThrow(() ->
-                                new RuntimeException("OTP not found"));
+                                new RuntimeException(
+                                        "OTP not found"
+                                )
+                        );
 
-        if (!resetToken.getOtp().equals(request.getOtp())) {
-            throw new RuntimeException("Invalid OTP");
+        if (!resetToken.getOtp()
+                .equals(request.getOtp())) {
+
+            throw new RuntimeException(
+                    "Invalid OTP"
+            );
         }
 
-        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP has expired");
+        if (resetToken.getExpiresAt()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "OTP has expired"
+            );
         }
     }
 
     // ==================== RESET PASSWORD ====================
 
     @Override
-    public void resetPassword(ResetPasswordRequest request) {
+    public void resetPassword(
+            ResetPasswordRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new RuntimeException(
+                                "User not found"
+                        )
+                );
 
         PasswordResetToken resetToken =
                 passwordResetTokenRepository
-                        .findTopByUserAndUsedFalseOrderByCreatedAtDesc(user)
+                        .findTopByUserAndUsedFalseOrderByCreatedAtDesc(
+                                user
+                        )
                         .orElseThrow(() ->
-                                new RuntimeException("OTP not found"));
+                                new RuntimeException(
+                                        "OTP not found"
+                                )
+                        );
 
-        if (!resetToken.getOtp().equals(request.getOtp())) {
-            throw new RuntimeException("Invalid OTP");
+        if (!resetToken.getOtp()
+                .equals(request.getOtp())) {
+
+            throw new RuntimeException(
+                    "Invalid OTP"
+            );
         }
 
-        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP has expired");
+        if (resetToken.getExpiresAt()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "OTP has expired"
+            );
         }
 
         user.setPassword(
@@ -298,8 +367,10 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
+        // Prevent OTP reuse
         resetToken.setUsed(true);
 
-        passwordResetTokenRepository.save(resetToken);
+        passwordResetTokenRepository
+                .save(resetToken);
     }
 }

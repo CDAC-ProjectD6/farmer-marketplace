@@ -174,7 +174,7 @@ public ProductResponseDto getProductByName(String name) {
 public List<ProductResponseDto> getProductsByCategoryName(String categoryName) {
 
     List<Product> products =
-            productRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+            productRepository.findByCategory_NameContainingIgnoreCase(categoryName);
 
     List<ProductResponseDto> responseList = new ArrayList<>();
 
