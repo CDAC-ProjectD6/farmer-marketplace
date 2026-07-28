@@ -53,4 +53,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FarmerApprovalStatus status2,
             String email
     );
+    
+    
+		 // ==================== ADMIN DASHBOARD ====================
+		
+		 // Count users by role
+		 long countByRole(Role role);
+		
+		 // Count farmers by approval status
+		 long countByRoleAndFarmerApprovalStatus(
+		         Role role,
+		         FarmerApprovalStatus farmerApprovalStatus
+ );
 }
