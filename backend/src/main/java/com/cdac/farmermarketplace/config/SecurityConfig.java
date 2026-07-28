@@ -34,6 +34,8 @@ public class SecurityConfig {
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
