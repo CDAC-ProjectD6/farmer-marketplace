@@ -11,13 +11,12 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact";
 import Cart from "../pages/customer/Cart";
 import Wishlist from "../pages/customer/Wishlist";
-
 import Checkout from "../pages/customer/Checkout";
 import MyOrders from "../pages/customer/MyOrders";
 import OrderDetails from "../pages/customer/OrderDetails";
 import OrderSuccess from "../pages/customer/OrderSuccess";
 import OrderTest from "../pages/customer/OrderTest";
-
+import ProfilePage from "../pages/customer/ProfilePage";
 
 // Admin pages
 import CategoryList from "../pages/admin/CategoryList";
@@ -25,102 +24,94 @@ import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
 import Farmers from "../pages/admin/Farmers";
 
-
 // Auth pages
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 
-
 import ProtectedRoute from "./ProtectedRoute";
 
-
 function AppRoutes() {
-
   return (
-
     <Routes>
-
-
       {/* Customer Layout */}
-
       <Route path="/" element={<MainLayout />}>
-
-
         <Route index element={<Home />} />
-
 
         <Route
           path="products"
           element={<Products />}
         />
 
-
         <Route
           path="products/:id"
           element={<ProductDetails />}
         />
-
 
         <Route
           path="categories"
           element={<Categories />}
         />
 
-
-
         {/* Cart */}
-
         <Route
           path="cart"
           element={<Cart />}
         />
-
 
         <Route
           path="wishlist"
           element={<Wishlist />}
         />
 
-
-
         {/* Checkout & Orders */}
-
         <Route
           path="checkout"
           element={<Checkout />}
         />
-
 
         <Route
           path="order-success"
           element={<OrderSuccess />}
         />
 
-
         <Route
           path="orders"
-          element={<MyOrders />}
+          element={
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
+              <MyOrders />
+            </ProtectedRoute>
+          }
         />
-
 
         <Route
           path="orders/:orderId"
-          element={<OrderDetails />}
+          element={
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
+              <OrderDetails />
+            </ProtectedRoute>
+          }
         />
 
+        {/* Customer Profile */}
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute
+              allowedRoles={["CONSUMER", "FARMER", "ADMIN"]}
+            >
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Temporary API Testing */}
-
         <Route
           path="orders-test"
           element={<OrderTest />}
         />
 
-
-
         {/* Admin Category */}
-
         <Route
           path="category-management"
           element={
@@ -130,10 +121,7 @@ function AppRoutes() {
           }
         />
 
-
-
         {/* Admin Users */}
-
         <Route
           path="admin/users"
           element={
@@ -142,8 +130,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-
 
         <Route
           path="admin/users/:id"
@@ -154,10 +140,7 @@ function AppRoutes() {
           }
         />
 
-
-
         {/* Farmer Approval */}
-
         <Route
           path="admin/farmers"
           element={
@@ -167,52 +150,35 @@ function AppRoutes() {
           }
         />
 
-
-
         {/* Static Pages */}
-
         <Route
           path="about"
           element={<About />}
         />
 
-
         <Route
           path="contact"
           element={<Contact />}
         />
-
-
       </Route>
 
-
-
-
       {/* Authentication */}
-
       <Route
         path="/login"
         element={<Login />}
       />
-
 
       <Route
         path="/register"
         element={<Register />}
       />
 
-
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
       />
-
-
     </Routes>
-
   );
-
 }
-
 
 export default AppRoutes;
