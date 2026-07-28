@@ -82,6 +82,10 @@ public class SecurityConfig {
                     HttpMethod.GET,
                     "/api/product-images/**"
                 ).permitAll()
+                
+             // Admin APIs
+                .requestMatchers("/api/admin/**")
+                .hasRole("ADMIN")
 
                 // Everything else requires authentication
                 .anyRequest().authenticated()

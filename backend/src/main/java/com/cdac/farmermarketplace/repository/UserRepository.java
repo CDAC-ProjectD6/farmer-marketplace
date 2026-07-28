@@ -1,13 +1,14 @@
 package com.cdac.farmermarketplace.repository;
 
 import java.util.List;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
-
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
@@ -31,5 +32,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
             String name,
             Role role2,
             String email
+    );
+    
+    List<User> findByRoleAndApprovalStatus(
+            Role role,
+            FarmerApprovalStatus approvalStatus
+    );
+
+    Optional<User> findByIdAndRole(
+            Long id,
+            Role role
     );
 }

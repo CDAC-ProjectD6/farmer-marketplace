@@ -16,6 +16,9 @@ import CategoryList from "../pages/admin/CategoryList";
 import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
 
+import Farmers from "../pages/admin/Farmers";
+import FarmerDetails from "../pages/admin/FarmerDetails";
+
 // Auth pages
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -66,6 +69,16 @@ function AppRoutes() {
           }
         />
 
+        {/* ADMIN - Farmer Approval */}
+<Route
+  path="admin/farmers"
+  element={
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <Farmers />
+    </ProtectedRoute>
+  }
+/>
+
         {/* ADMIN - User Details */}
         <Route
           path="admin/users/:id"
@@ -75,6 +88,16 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        {/* ADMIN - Farmer Details */}
+<Route
+  path="admin/farmers/:id"
+  element={
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <FarmerDetails />
+    </ProtectedRoute>
+  }
+/>
 
         <Route
           path="about"

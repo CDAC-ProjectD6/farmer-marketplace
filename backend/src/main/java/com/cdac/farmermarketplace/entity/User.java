@@ -1,6 +1,8 @@
 package com.cdac.farmermarketplace.entity;
 
 import jakarta.persistence.Column;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,4 +38,9 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FarmerApprovalStatus approvalStatus =
+            FarmerApprovalStatus.APPROVED;
 }
