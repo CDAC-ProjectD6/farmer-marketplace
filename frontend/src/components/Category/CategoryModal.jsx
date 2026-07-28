@@ -18,7 +18,7 @@ function CategoryModal({ showModal, onClose, onSave , editingCategory}) {
         id: editingCategory ? editingCategory.id : null,
         name: categoryName,
         description: description,
-        status: "Active"
+        active: editingCategory ? editingCategory.active : true
         };
         onSave(newCategory);
         setCategoryName("");

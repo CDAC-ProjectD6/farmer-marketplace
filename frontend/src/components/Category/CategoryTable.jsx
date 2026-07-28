@@ -17,7 +17,7 @@ function CategoryTable({ categories, onEdit, onToggleStatus }) {
                             <td>{category.id}</td>
                             <td>{category.name}</td>
                             <td>{category.description}</td>
-                            <td className="text-center">{category.status === "Active" ? (
+                            <td className="text-center">{category.active ? (
                                 <span className="badge bg-success">Active</span>) : (
                                 <span className="badge bg-danger">Inactive</span>
                             )}
@@ -29,13 +29,13 @@ function CategoryTable({ categories, onEdit, onToggleStatus }) {
                                 </button>
 
                                 <button
-                                    className={`btn btn-sm ${category.status === "Active"
+                                    className={`btn btn-sm ${category.active
                                             ? "btn-danger"
                                             : "btn-success"
                                         }`}
                                     onClick={() => onToggleStatus(category.id)}
                                 >
-                                    {category.status === "Active"
+                                    {category.active
                                         ? "Deactivate"
                                         : "Activate"}
                                 </button>

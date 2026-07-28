@@ -1,16 +1,29 @@
 import CategoryTable from "../../components/Category/CategoryTable";
-import mockCategories from "../../data/mockCategories";
+import { getAllCategories } from "../../services/categoryService";
 import CategoryModal from "../../components/Category/CategoryModal";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function CategoryList() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [sortBy, setSortBy] = useState("Default");
     const [showModal, setShowModal] = useState(false);
-    const [categories, setCategories] = useState(mockCategories);
+    const [categories, setCategories] = useState([]);
     const [editingCategory, setEditingCategory] = useState(null);
+
+    useEffect(() => {
+    loadCategories();
+}, []);
+
+const loadCategories = async () => {
+    try {
+        const response = await getAllCategories();
+        setCategories(response.data);
+    } catch (error) {
+        console.error("Error loading categories:", error);
+    }
+};
 
     const handleAddCategory = (newCategory) =>{
         if (editingCategory) {
@@ -54,9 +67,7 @@ function CategoryList() {
         category.id === id
             ? {
                 ...category,
-                status: category.status === "Active"
-                    ? "Inactive"
-                    : "Active"
+                active: !category.active
             }
             : category
     );
@@ -69,8 +80,10 @@ function CategoryList() {
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
 
-        const matchesStatus =
-            statusFilter === "All" || category.status === statusFilter;
+       const matchesStatus =
+    statusFilter === "All" ||
+    (statusFilter === "Active" && category.active) ||
+    (statusFilter === "Inactive" && !category.active);
 
         return matchesStatus && matchesSearch;
     });
