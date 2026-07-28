@@ -29,19 +29,21 @@ public class ProductRequestDto {
     @Size(max = 100, message = "Brand name cannot exceed 100 characters")
     private String brand;
 
+    @Size(max = 500, message = "Image URL cannot exceed 500 characters")
     private String imageUrl;
 
-    @NotNull(message = "Product status is required")
+    // Optional
     private Boolean active;
 
+    @NotNull(message = "Category is required")
     private Long categoryId;
-
-    private Long farmerId;
 
     public ProductRequestDto() {
     }
 
+    // =========================
     // Getters and Setters
+    // =========================
 
     public String getName() {
         return name;
@@ -105,13 +107,5 @@ public class ProductRequestDto {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public Long getFarmerId() {
-        return farmerId;
-    }
-
-    public void setFarmerId(Long farmerId) {
-        this.farmerId = farmerId;
     }
 }
