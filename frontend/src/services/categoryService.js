@@ -1,27 +1,34 @@
-import axios from "axios";
+import api from "./api";
 
-const BASE_URL = "http://localhost:8080/api/categories";
-
-export const getAllCategories = () => {
-    return axios.get(BASE_URL);
+export const getAllCategories = async () => {
+  const response = await api.get("/categories");
+  return response.data;
 };
 
-export const addCategory = (category) => {
-    return axios.post(BASE_URL, category);
+export const addCategory = async (category) => {
+  const response = await api.post("/categories", category);
+  return response.data;
 };
 
-export const updateCategory = (id, category) => {
-    return axios.put(`${BASE_URL}/${id}`, category);
+export const updateCategory = async (id, category) => {
+  const response = await api.put(`/categories/${id}`, category);
+  return response.data;
 };
 
-export const deleteCategory = (id) => {
-    return axios.delete(`${BASE_URL}/${id}`);
+export const deleteCategory = async (id) => {
+  const response = await api.delete(`/categories/${id}`);
+  return response.data;
 };
 
-export const getActiveCategories = () => {
-    return axios.get(`${BASE_URL}/active`);
+export const getActiveCategories = async () => {
+  const response = await api.get("/categories/active");
+  return response.data;
 };
 
-export const searchCategories = (keyword) => {
-    return axios.get(`${BASE_URL}/search?keyword=${keyword}`);
+export const searchCategories = async (keyword) => {
+  const response = await api.get("/categories/search", {
+    params: { keyword },
+  });
+
+  return response.data;
 };
