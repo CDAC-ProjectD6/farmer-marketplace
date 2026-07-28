@@ -64,21 +64,21 @@ function Navbar() {
               </Link>
             </li>
 
-            {/* ADMIN ONLY */}
+            {/* ================= ADMIN ONLY ================= */}
+
             {isAuthenticated && user?.role === "ADMIN" && (
-              <li className="nav-item">
-                <Link
-                  className="nav-link"
-                  to="/category-management"
-                >
-                  Manage Categories
-                </Link>
-              </li>
-            )}
+              <>
+                {/* Category Management */}
+                <li className="nav-item">
+                  <Link
+                    className="nav-link"
+                    to="/category-management"
+                  >
+                    Manage Categories
+                  </Link>
+                </li>
 
-
-            {/* ADMIN - Manage Users */}
-              {isAuthenticated && user?.role === "ADMIN" && (
+                {/* User Management */}
                 <li className="nav-item">
                   <Link
                     className="nav-link"
@@ -87,9 +87,20 @@ function Navbar() {
                     Manage Users
                   </Link>
                 </li>
-              )}
 
+                {/* Farmer Approval */}
+                <li className="nav-item">
+                  <Link
+                    className="nav-link"
+                    to="/admin/farmers"
+                  >
+                    Farmer Approval
+                  </Link>
+                </li>
+              </>
+            )}
 
+            {/* ================= COMMON LINKS ================= */}
 
             <li className="nav-item">
               <Link className="nav-link" to="/about">
@@ -157,6 +168,7 @@ function Navbar() {
             )}
 
           </div>
+
         </div>
       </div>
     </nav>
