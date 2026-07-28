@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
+// Customer pages
 import Home from "../pages/customer/Home";
 import Products from "../pages/customer/Products";
 import ProductDetails from "../pages/customer/ProductDetails";
@@ -11,11 +12,16 @@ import Contact from "../pages/customer/Contact";
 import Cart from "../pages/customer/Cart";
 import Wishlist from "../pages/customer/Wishlist";
 
+import Checkout from "../pages/customer/Checkout";
+import MyOrders from "../pages/customer/MyOrders";
+import OrderDetails from "../pages/customer/OrderDetails";
+import OrderSuccess from "../pages/customer/OrderSuccess";
+import OrderTest from "../pages/customer/OrderTest";
+
 // Admin pages
 import CategoryList from "../pages/admin/CategoryList";
 import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
-
 import Farmers from "../pages/admin/Farmers";
 import FarmerDetails from "../pages/admin/FarmerDetails";
 
@@ -29,9 +35,8 @@ import ProtectedRoute from "./ProtectedRoute";
 function AppRoutes() {
   return (
     <Routes>
-
+      {/* Customer Layout */}
       <Route path="/" element={<MainLayout />}>
-
         <Route index element={<Home />} />
 
         <Route
@@ -49,66 +54,7 @@ function AppRoutes() {
           element={<Categories />}
         />
 
-        {/* ADMIN - Category Management */}
-        <Route
-          path="category-management"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <CategoryList />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ADMIN - User Management */}
-        <Route
-          path="admin/users"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <Users />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ADMIN - Farmer Approval */}
-<Route
-  path="admin/farmers"
-  element={
-    <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <Farmers />
-    </ProtectedRoute>
-  }
-/>
-
-        {/* ADMIN - User Details */}
-        <Route
-          path="admin/users/:id"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <UserDetails />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ADMIN - Farmer Details */}
-<Route
-  path="admin/farmers/:id"
-  element={
-    <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <FarmerDetails />
-    </ProtectedRoute>
-  }
-/>
-
-        <Route
-          path="about"
-          element={<About />}
-        />
-
-        <Route
-          path="contact"
-          element={<Contact />}
-        />
-
+        {/* Cart */}
         <Route
           path="cart"
           element={<Cart />}
@@ -119,6 +65,91 @@ function AppRoutes() {
           element={<Wishlist />}
         />
 
+        {/* Checkout & Orders */}
+        <Route
+          path="checkout"
+          element={<Checkout />}
+        />
+
+        <Route
+          path="order-success"
+          element={<OrderSuccess />}
+        />
+
+        <Route
+          path="orders"
+          element={<MyOrders />}
+        />
+
+        <Route
+          path="orders/:orderId"
+          element={<OrderDetails />}
+        />
+
+        {/* Temporary API Testing */}
+        <Route
+          path="orders-test"
+          element={<OrderTest />}
+        />
+
+        {/* Admin Category */}
+        <Route
+          path="category-management"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <CategoryList />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Users */}
+        <Route
+          path="admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="admin/users/:id"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <UserDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Farmer Approval */}
+        <Route
+          path="admin/farmers"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Farmers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="admin/farmers/:id"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <FarmerDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Static Pages */}
+        <Route
+          path="about"
+          element={<About />}
+        />
+
+        <Route
+          path="contact"
+          element={<Contact />}
+        />
       </Route>
 
       {/* Authentication */}
@@ -136,7 +167,6 @@ function AppRoutes() {
         path="/forgot-password"
         element={<ForgotPassword />}
       />
-
     </Routes>
   );
 }

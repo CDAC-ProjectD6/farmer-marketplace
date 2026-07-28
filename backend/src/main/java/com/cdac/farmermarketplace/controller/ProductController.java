@@ -1,5 +1,6 @@
 package com.cdac.farmermarketplace.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -97,7 +98,8 @@ public class ProductController {
     }
 
     // ================= ACTIVE PRODUCTS =================
-    // Any authenticated user can view
+    // Any authentic
+    // ated user can view
     @GetMapping("/active")
     public ResponseEntity<List<ProductResponseDto>> getActiveProducts() {
 
@@ -115,4 +117,49 @@ public class ProductController {
                 productService.getAvailableProducts()
         );
     }
+   @GetMapping("/search")
+public ResponseEntity<List<ProductResponseDto>> searchProducts(
+        @RequestParam("keyword") String keyword) {
+    return ResponseEntity.ok(productService.searchProducts(keyword));
+}
+
+@GetMapping("/name/{name}")
+public ResponseEntity<ProductResponseDto> getProductByName(
+        @PathVariable String name) {
+
+    return ResponseEntity.ok(productService.getProductByName(name));
+}
+@GetMapping("/category/{categoryId}")
+public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(
+        @PathVariable Long categoryId) {
+
+    return ResponseEntity.ok(productService.getProductsByCategory(categoryId));
+}
+@GetMapping("/category/name/{categoryName}")
+public ResponseEntity<List<ProductResponseDto>> getProductsByCategoryName(
+        @PathVariable String categoryName) {
+
+    return ResponseEntity.ok(
+            productService.getProductsByCategoryName(categoryName));
+}
+@GetMapping("/farmer/{farmerId}")
+public ResponseEntity<List<ProductResponseDto>> getProductsByFarmer(
+        @PathVariable Long farmerId) {
+
+    return ResponseEntity.ok(productService.getProductsByFarmer(farmerId));
+}
+@GetMapping("/price")
+public ResponseEntity<List<ProductResponseDto>> getProductsByPriceRange(
+        @RequestParam("minPrice") BigDecimal minPrice,
+        @RequestParam("maxPrice") BigDecimal maxPrice) {
+    return ResponseEntity.ok(productService.getProductsByPriceRange(minPrice, maxPrice));
+}
+
+@GetMapping("/stock/{stock}")
+public ResponseEntity<List<ProductResponseDto>> getProductsByStock(
+        @PathVariable Integer stock) {
+
+    return ResponseEntity.ok(productService.getProductsByStock(stock));
+}
+
 }

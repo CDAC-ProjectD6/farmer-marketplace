@@ -59,20 +59,17 @@ public class Product {
     @Column(nullable = false)
     private Boolean active = true;
 
-    // =====================================
+    // =============================
     // Relationships
-    // =====================================
+    // =============================
 
-    // Uncomment after Category entity is available
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "category_id", nullable = false)
-    // private Category category;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farmer_id", nullable = false)
     private User farmer;
-    
 
     @OneToMany(
             mappedBy = "product",
@@ -86,7 +83,7 @@ public class Product {
             orphanRemoval = true)
     private List<ProductStockHistory> stockHistory = new ArrayList<>();
 
-    // =====================================
+    // =============================
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -108,9 +105,9 @@ public class Product {
         updatedAt = LocalDateTime.now();
     }
 
-    // =====================
+    // =============================
     // Getters and Setters
-    // =====================
+    // =============================
 
     public Long getId() {
         return id;
@@ -176,9 +173,6 @@ public class Product {
         this.active = active;
     }
 
-    // Uncomment after Category entity is available
-
-    /*
     public Category getCategory() {
         return category;
     }
@@ -186,7 +180,6 @@ public class Product {
     public void setCategory(Category category) {
         this.category = category;
     }
-    */
 
     public User getFarmer() {
         return farmer;

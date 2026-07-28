@@ -40,7 +40,12 @@ public class User extends BaseEntity {
     private boolean active = true;
     
     @Enumerated(EnumType.STRING)
+<<<<<<< HEAD
     @Column(nullable = false)
     private FarmerApprovalStatus approvalStatus =
             FarmerApprovalStatus.APPROVED;
+=======
+    @Column(name = "farmer_approval_status")
+    private FarmerApprovalStatus farmerApprovalStatus;
+>>>>>>> develop
 }
