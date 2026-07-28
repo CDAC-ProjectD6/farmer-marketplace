@@ -15,6 +15,7 @@ import Wishlist from "../pages/customer/Wishlist";
 import CategoryList from "../pages/admin/CategoryList";
 import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
+import Farmers from "../pages/admin/Farmers";
 
 // Auth pages
 import Login from "../pages/auth/Login";
@@ -72,6 +73,16 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <UserDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN - Farmer Approval */}
+        <Route
+          path="admin/farmers"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Farmers />
             </ProtectedRoute>
           }
         />
