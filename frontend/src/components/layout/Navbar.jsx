@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "./Navbar.css";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -74,6 +75,21 @@ function Navbar() {
                 </Link>
               </li>
             )}
+
+
+            {/* ADMIN - Manage Users */}
+              {isAuthenticated && user?.role === "ADMIN" && (
+                <li className="nav-item">
+                  <Link
+                    className="nav-link"
+                    to="/admin/users"
+                  >
+                    Manage Users
+                  </Link>
+                </li>
+              )}
+
+
 
             <li className="nav-item">
               <Link className="nav-link" to="/about">
