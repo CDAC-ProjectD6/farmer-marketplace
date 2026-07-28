@@ -35,6 +35,7 @@ public class AdminSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
+        // Check whether admin credentials are configured
         if (adminEmail.isBlank()
                 || adminPassword.isBlank()
                 || adminMobile.isBlank()) {
@@ -45,21 +46,32 @@ public class AdminSeeder implements CommandLineRunner {
             return;
         }
 
-        if (userRepository.existsByEmail(adminEmail)) {
+        // Check both email and mobile before creating admin
+        if (userRepository.existsByEmail(adminEmail)
+                || userRepository.existsByMobile(adminMobile)) {
+
+            System.out.println(
+                    "Admin already exists. Skipping admin creation."
+            );
             return;
         }
 
+        // Create default admin
         User admin = new User();
 
         admin.setName("System Admin");
         admin.setEmail(adminEmail);
         admin.setMobile(adminMobile);
-        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setPassword(
+                passwordEncoder.encode(adminPassword)
+        );
         admin.setRole(Role.ADMIN);
         admin.setActive(true);
 
         userRepository.save(admin);
 
-        System.out.println("Default admin created successfully.");
+        System.out.println(
+                "Default admin created successfully."
+        );
     }
 }
