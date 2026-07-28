@@ -91,6 +91,7 @@ function Checkout() {
 
 
       alert(
+        error.response?.data?.message ||
         error.response?.data ||
         "Unable to place order"
       );
@@ -107,6 +108,7 @@ function Checkout() {
 
 
   };
+
 
 
 
@@ -186,6 +188,8 @@ function Checkout() {
 
 
 
+
+
               <div className="mb-3">
 
 
@@ -212,6 +216,8 @@ function Checkout() {
 
 
               </div>
+
+
 
 
 
@@ -252,6 +258,11 @@ function Checkout() {
 
 
 
+
+
+              {/* UPDATED PAYMENT METHOD */}
+
+
               <div className="mb-3">
 
 
@@ -273,14 +284,37 @@ function Checkout() {
 
                 >
 
+
                   <option value="COD">
+
                     Cash On Delivery
+
                   </option>
 
 
-                  <option value="ONLINE">
-                    Online Payment
+
+                  <option value="UPI">
+
+                    UPI Payment
+
                   </option>
+
+
+
+                  <option value="CARD">
+
+                    Debit / Credit Card
+
+                  </option>
+
+
+
+                  <option value="NET_BANKING">
+
+                    Net Banking
+
+                  </option>
+
 
 
                 </select>
@@ -306,6 +340,9 @@ function Checkout() {
 
 
 
+
+
+
         {/* Summary */}
 
 
@@ -324,6 +361,7 @@ function Checkout() {
 
 
 
+
               <div className="d-flex justify-content-between mb-3">
 
 
@@ -332,8 +370,10 @@ function Checkout() {
                 </span>
 
 
-                <span>
+                <span className="fw-bold">
+
                   {order.paymentMethod}
+
                 </span>
 
 
@@ -344,6 +384,7 @@ function Checkout() {
 
 
               <hr />
+
 
 
 
@@ -360,11 +401,17 @@ function Checkout() {
               >
 
                 {
+
                   loading
+
                   ?
+
                   "Placing Order..."
+
                   :
+
                   "Place Order"
+
                 }
 
 
@@ -384,7 +431,10 @@ function Checkout() {
 
 
 
+
+
       </div>
+
 
 
 
