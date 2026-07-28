@@ -65,19 +65,14 @@ public class Product {
 
     // Uncomment after Category entity is available
 
-    /*
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-    */
-
-    // Uncomment after User entity is available
-
-    /*
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "category_id", nullable = false)
+    // private Category category;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farmer_id", nullable = false)
     private User farmer;
-    */
+    
 
     @OneToMany(
             mappedBy = "product",
@@ -193,9 +188,6 @@ public class Product {
     }
     */
 
-    // Uncomment after User entity is available
-
-    /*
     public User getFarmer() {
         return farmer;
     }
@@ -203,7 +195,6 @@ public class Product {
     public void setFarmer(User farmer) {
         this.farmer = farmer;
     }
-    */
 
     public List<ProductImage> getProductImages() {
         return productImages;
