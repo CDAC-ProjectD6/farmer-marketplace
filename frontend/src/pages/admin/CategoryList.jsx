@@ -1,5 +1,9 @@
 import CategoryTable from "../../components/Category/CategoryTable";
-import { getAllCategories } from "../../services/categoryService";
+import {
+    getAllCategories,
+    addCategory,
+    updateCategory
+} from "../../services/categoryService";
 import CategoryModal from "../../components/Category/CategoryModal";
 
 import { useEffect, useState } from "react";
@@ -25,56 +29,89 @@ const loadCategories = async () => {
     }
 };
 
-    const handleAddCategory = (newCategory) =>{
+    const handleAddCategory = async (newCategory) => {
+
+    try {
+
         if (editingCategory) {
-        handleUpdateCategory(newCategory);
-        return;
+
+            await updateCategory(editingCategory.id, {
+                name: newCategory.name,
+                description: newCategory.description,
+                active: editingCategory.active
+            });
+
+        } else {
+
+            await addCategory({
+                name: newCategory.name,
+                description: newCategory.description,
+                active: true
+            });
+
+        }
+
+        await loadCategories();
+
+        setShowModal(false);
+
+        setEditingCategory(null);
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Operation failed.");
+
     }
-       const categoryWithId = {
-        ...newCategory, id: Date.now()
-       };
 
-       setCategories([
-        ...categories, categoryWithId
-       ]);
-
-       setShowModal(false);
-    };
+};
 
     const handleEditCategory = (category) => {
         setEditingCategory(category);
         setShowModal(true);
     };
 
-    const handleUpdateCategory = (updateCategory) => {
-        const updatedCategories = categories.map((category) => 
-        category.id === updateCategory.id ? updateCategory : category
-    );
-    setCategories(updatedCategories);
-    setEditingCategory(null);
-    setShowModal(false);
-    }
+    // const handleUpdateCategory = (updateCategory) => {
+    //     const updatedCategories = categories.map((category) => 
+    //     category.id === updateCategory.id ? updateCategory : category
+    // );
+    // setCategories(updatedCategories);
+    // setEditingCategory(null);
+    // setShowModal(false);
+    // }
 
-    const handleToggleStatus = (id) => {
-         const confirmAction = window.confirm(
+    const handleToggleStatus = async (id) => {
+
+    const confirmAction = window.confirm(
         "Are you sure you want to change the category status?"
     );
 
     if (!confirmAction) return;
 
+    const category = categories.find(c => c.id === id);
 
-    const updatedCategories = categories.map((category) =>
-        category.id === id
-            ? {
-                ...category,
-                active: !category.active
-            }
-            : category
-    );
+    if (!category) return;
 
-    setCategories(updatedCategories);
+    try {
+
+        await updateCategory(id, {
+            name: category.name,
+            description: category.description,
+            active: !category.active
+        });
+
+        await loadCategories();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Failed to update category.");
+
+    }
+
 };
-
     const filteredCategories = categories.filter((category) => {
         const matchesSearch = category.name
             .toLowerCase()
