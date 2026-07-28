@@ -1,7 +1,7 @@
 package com.cdac.farmermarketplace.dto.response;
 
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
-
+//import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

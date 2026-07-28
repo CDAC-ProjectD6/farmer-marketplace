@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdac.farmermarketplace.dto.response.AdminFarmerResponseDto;
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.service.AdminFarmerService;
 
 @RestController

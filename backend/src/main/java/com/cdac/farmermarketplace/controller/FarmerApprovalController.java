@@ -11,7 +11,7 @@ import com.cdac.farmermarketplace.service.FarmerApprovalService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/farmers")
+@RequestMapping("/api/test/farmers")
 @RequiredArgsConstructor
 public class FarmerApprovalController {
 

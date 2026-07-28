@@ -1,74 +1,40 @@
 package com.cdac.farmermarketplace.repository;
 
 import java.util.List;
-import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
 import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
+
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // ==================== AUTH ====================
+	// ==================== AUTH ====================
 
-    Optional<User> findByEmail(String email);
+	Optional<User> findByEmail(String email);
 
-    boolean existsByEmail(String email);
+	boolean existsByEmail(String email);
 
-    boolean existsByMobile(String mobile);
+	boolean existsByMobile(String mobile);
 
+	// ==================== ADMIN USER MANAGEMENT ====================
 
-    // ==================== ADMIN USER MANAGEMENT ====================
+	List<User> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
 
-    // Search users by name or email
-    List<User> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-            String name,
-            String email
-    );
+	List<User> findByRole(Role role);
 
-    // Filter users by role
-    List<User> findByRole(Role role);
+	List<User> findByRoleAndNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(Role role1, String name,
+			Role role2, String email);
 
-    // Search users and filter by role
-    List<User> findByRoleAndNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
-            Role role1,
-            String name,
-            Role role2,
-            String email
-    );
-<<<<<<< HEAD
-    
-    List<User> findByRoleAndApprovalStatus(
-            Role role,
-            FarmerApprovalStatus approvalStatus
-    );
+	// ==================== FARMER APPROVAL ====================
 
-    Optional<User> findByIdAndRole(
-            Long id,
-            Role role
-=======
+	List<User> findByRoleAndFarmerApprovalStatus(Role role, FarmerApprovalStatus status);
 
+	Optional<User> findByIdAndRole(Long id, Role role);
 
-    // ==================== FARMER APPROVAL ====================
-
-    // Filter farmers by approval status
-    List<User> findByRoleAndFarmerApprovalStatus(
-            Role role,
-            FarmerApprovalStatus farmerApprovalStatus
-    );
-
-    // Search farmers and filter by approval status
-    List<User>
-    findByRoleAndFarmerApprovalStatusAndNameContainingIgnoreCaseOrRoleAndFarmerApprovalStatusAndEmailContainingIgnoreCase(
-            Role role1,
-            FarmerApprovalStatus status1,
-            String name,
-            Role role2,
-            FarmerApprovalStatus status2,
-            String email
->>>>>>> develop
-    );
+	List<User> findByRoleAndFarmerApprovalStatusAndNameContainingIgnoreCaseOrRoleAndFarmerApprovalStatusAndEmailContainingIgnoreCase(
+			Role role1, FarmerApprovalStatus status1, String keyword1, Role role2, FarmerApprovalStatus status2,
+			String keyword2);
 }

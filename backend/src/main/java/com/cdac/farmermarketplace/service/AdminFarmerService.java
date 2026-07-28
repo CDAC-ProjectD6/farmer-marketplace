@@ -1,16 +1,16 @@
 package com.cdac.farmermarketplace.service;
 
 import java.util.List;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 
 import com.cdac.farmermarketplace.dto.response.AdminFarmerResponseDto;
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
-
+//import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+//import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 public interface AdminFarmerService {
 
     List<AdminFarmerResponseDto> getFarmers(
             String search,
-            FarmerApprovalStatus status
-    );
+            FarmerApprovalStatus status);
 
     List<AdminFarmerResponseDto> getPendingFarmers();
 

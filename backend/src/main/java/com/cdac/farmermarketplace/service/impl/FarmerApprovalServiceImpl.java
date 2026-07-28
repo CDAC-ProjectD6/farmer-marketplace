@@ -32,7 +32,7 @@ public class FarmerApprovalServiceImpl implements FarmerApprovalService {
     @Override
     public List<FarmerResponse> getPendingFarmers() {
 
-        return userRepository.findByRoleAndApprovalStatus(
+        return userRepository.findByRoleAndFarmerApprovalStatus(
                 Role.FARMER,
                 FarmerApprovalStatus.PENDING)
                 .stream()
@@ -47,7 +47,7 @@ public class FarmerApprovalServiceImpl implements FarmerApprovalService {
                 .orElseThrow(() ->
                         new RuntimeException("Farmer not found"));
 
-        farmer.setApprovalStatus(FarmerApprovalStatus.APPROVED);
+        farmer.setFarmerApprovalStatus(FarmerApprovalStatus.APPROVED);
 
         userRepository.save(farmer);
 
@@ -61,7 +61,7 @@ public class FarmerApprovalServiceImpl implements FarmerApprovalService {
                 .orElseThrow(() ->
                         new RuntimeException("Farmer not found"));
 
-        farmer.setApprovalStatus(FarmerApprovalStatus.REJECTED);
+        farmer.setFarmerApprovalStatus(FarmerApprovalStatus.REJECTED);
 
         userRepository.save(farmer);
 
@@ -75,7 +75,7 @@ public class FarmerApprovalServiceImpl implements FarmerApprovalService {
                 user.getName(),
                 user.getEmail(),
                 user.getMobile(),
-                user.getApprovalStatus()
+                user.getFarmerApprovalStatus()
         );
     }
 }

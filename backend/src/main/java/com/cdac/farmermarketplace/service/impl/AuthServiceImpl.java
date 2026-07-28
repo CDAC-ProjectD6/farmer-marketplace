@@ -15,7 +15,7 @@ import com.cdac.farmermarketplace.dto.request.RegisterRequest;
 import com.cdac.farmermarketplace.dto.request.ResetPasswordRequest;
 import com.cdac.farmermarketplace.dto.request.VerifyOtpRequest;
 import com.cdac.farmermarketplace.dto.response.LoginResponse;
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+//import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.entity.PasswordResetToken;
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
@@ -81,18 +81,19 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(request.getRole());
         user.setActive(true);
 
-<<<<<<< HEAD
+     // New farmers require admin approval
         if (request.getRole() == Role.FARMER) {
-        	user.setApprovalStatus(FarmerApprovalStatus.PENDING);
-        } else {
-        	user.setApprovalStatus(FarmerApprovalStatus.APPROVED);
-=======
-        // New farmers must be approved by Admin
-        if (request.getRole() == Role.FARMER) {
+
             user.setFarmerApprovalStatus(
                     FarmerApprovalStatus.PENDING
             );
->>>>>>> develop
+
+        } else {
+
+            user.setFarmerApprovalStatus(
+                    FarmerApprovalStatus.APPROVED
+            );
+        
         }
 
         userRepository.save(user);
@@ -106,6 +107,10 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
                         new RuntimeException("Invalid email or password"));
+        System.out.println("Entered Password : " + request.getPassword());
+        System.out.println("Stored Hash      : " + user.getPassword());
+        System.out.println("Password Match   : "
+                + passwordEncoder.matches(request.getPassword(), user.getPassword()));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),

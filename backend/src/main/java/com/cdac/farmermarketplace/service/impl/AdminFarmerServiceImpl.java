@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdac.farmermarketplace.dto.response.AdminFarmerResponseDto;
-import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+//import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
+
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.repository.UserRepository;
 import com.cdac.farmermarketplace.service.AdminFarmerService;
 
@@ -66,7 +68,7 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
         } else if (status != null) {
 
             farmers =
-                    userRepository.findByRoleAndFarmerApprovalStatus(
+            		userRepository.findByRoleAndFarmerApprovalStatus(
                             Role.FARMER,
                             status
                     );
@@ -188,4 +190,6 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
                 farmer.getFarmerApprovalStatus()
         );
     }
+
+	
 }
