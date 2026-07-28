@@ -5,13 +5,38 @@ import java.util.List;
 import com.cdac.farmermarketplace.dto.request.PlaceOrderRequest;
 import com.cdac.farmermarketplace.dto.response.OrderResponse;
 
+
 public interface OrderService {
 
-    OrderResponse placeOrder(PlaceOrderRequest request);
 
-    OrderResponse getOrderById(Long orderId);
+    // Place order for logged-in user
+    OrderResponse placeOrder(
+            PlaceOrderRequest request,
+            Long userId
+    );
 
-    List<OrderResponse> getOrdersByUserId(Long userId);
 
-    void cancelOrder(Long orderId);
+
+    // Get order by id
+    OrderResponse getOrderById(
+            Long orderId,
+            Long userId
+    );
+
+
+
+    // Get logged-in user's orders
+    List<OrderResponse> getOrdersByUserId(
+            Long userId
+    );
+
+
+
+    // Cancel order
+    void cancelOrder(
+            Long orderId,
+            Long userId
+    );
+
+
 }

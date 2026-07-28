@@ -1,70 +1,131 @@
 package com.cdac.farmermarketplace.controller;
 
+
 import java.util.List;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+
+import com.cdac.farmermarketplace.config.SecurityUtils;
 import com.cdac.farmermarketplace.dto.request.PlaceOrderRequest;
 import com.cdac.farmermarketplace.dto.response.OrderResponse;
+import com.cdac.farmermarketplace.entity.User;
 import com.cdac.farmermarketplace.service.OrderService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+
+
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
-@Validated
+@CrossOrigin("*")
 public class OrderController {
+
+
 
     private final OrderService orderService;
 
-    // =========================
+    private final SecurityUtils securityUtils;
+
+
+
+
+
     // Place Order
-    // =========================
     @PostMapping("/place")
     public ResponseEntity<OrderResponse> placeOrder(
-            @Valid @RequestBody PlaceOrderRequest request) {
+    		 @Valid @RequestBody PlaceOrderRequest request
+    ){
 
-        OrderResponse response = orderService.placeOrder(request);
+        User user = securityUtils.getCurrentUser();
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(
+
+                orderService.placeOrder(
+                        request,
+                        user.getId()
+                ),
+
+                HttpStatus.CREATED
+        );
+
     }
 
-    // =========================
+
+
+
+
+
+
     // Get Order By Id
-    // =========================
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrderById(
-            @PathVariable Long orderId) {
+    public ResponseEntity<OrderResponse> getOrder(
+            @PathVariable Long orderId
+    ){
+
+        User user = securityUtils.getCurrentUser();
 
         return ResponseEntity.ok(
-                orderService.getOrderById(orderId));
+                orderService.getOrderById(
+                        orderId,
+                        user.getId()
+                )
+        );
+
     }
 
-    // =========================
-    // Get All Orders Of User
-    // =========================
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByUserId(
-            @PathVariable Long userId) {
+
+
+
+
+
+
+    // User Order History
+    @GetMapping("/my-orders")
+    public ResponseEntity<List<OrderResponse>> getMyOrders(){
+
+        User user = securityUtils.getCurrentUser();
+
 
         return ResponseEntity.ok(
-                orderService.getOrdersByUserId(userId));
+                orderService.getOrdersByUserId(
+                        user.getId()
+                )
+        );
+
     }
 
-    // =========================
+
+
+
+
+
+
+
     // Cancel Order
-    // =========================
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<String> cancelOrder(
-            @PathVariable Long orderId) {
+            @PathVariable Long orderId
+    ){
 
-        orderService.cancelOrder(orderId);
+        User user = securityUtils.getCurrentUser();
 
-        return ResponseEntity.ok("Order Cancelled Successfully");
+        orderService.cancelOrder(
+                orderId,
+                user.getId()
+        );
+
+        return ResponseEntity.ok(
+                "Order cancelled successfully"
+        );
+
     }
+
+
 }
