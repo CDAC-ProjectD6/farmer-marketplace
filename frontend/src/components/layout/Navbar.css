@@ -1,0 +1,48 @@
+/* Give navbar more horizontal space */
+.navbar .container {
+  max-width: 1450px;
+}
+
+/* Navigation links */
+.navbar .nav-link {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 500;
+  padding: 8px 9px !important;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.navbar .nav-link:hover {
+  color: #198754 !important;
+  background-color: #ffffff;
+}
+
+/* Logo */
+.navbar .navbar-brand {
+  color: #ffffff !important;
+  white-space: nowrap;
+  margin-right: 18px;
+}
+
+/* Logged-in user */
+.navbar .user-greeting {
+  color: #ffffff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Search box */
+.navbar form {
+  min-width: 210px;
+}
+
+.navbar form .form-control {
+  width: 100%;
+}
+
+/* Keep right side properly aligned */
+.navbar .d-flex.align-items-center {
+  gap: 6px;
+}
