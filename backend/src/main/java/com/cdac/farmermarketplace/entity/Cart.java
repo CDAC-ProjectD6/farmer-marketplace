@@ -20,6 +20,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @AttributeOverrides({
+	
+	   @AttributeOverride(
+		        name = "id",
+		        column = @Column(name = "cart_id")
+		    ),
     @AttributeOverride(
         name = "createdAt",
         column = @Column(name = "cart_created_at")
@@ -31,11 +36,7 @@ import lombok.Setter;
 })
 public class Cart extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
-    private Long cartId;
-
+ 
     @Column(name = "user_id", nullable = false)
     private Long userId;
 }

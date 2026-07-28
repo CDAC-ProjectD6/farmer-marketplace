@@ -28,6 +28,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @AttributeOverrides({
+	   @AttributeOverride(
+		        name = "id",
+		        column = @Column(name = "order_id")
+		    ),
     @AttributeOverride(
         name = "createdAt",
         column = @Column(name = "order_created_at")
@@ -39,10 +43,6 @@ import lombok.Setter;
 })
 public class Order extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long orderId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

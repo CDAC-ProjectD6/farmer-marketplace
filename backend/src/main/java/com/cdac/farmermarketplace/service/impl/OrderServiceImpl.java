@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
         Cart cart = cartRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
-        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getCartId());
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
         if (cartItems.isEmpty()) {
             throw new BadRequestException("Cart is empty");
@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderItem orderItem = new OrderItem();
 
-            orderItem.setOrderId(order.getOrderId());
+            orderItem.setOrderId(order.getId());
             orderItem.setProductId(cartItem.getProductId());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(cartItem.getPrice());
@@ -96,10 +96,10 @@ public class OrderServiceImpl implements OrderService {
                             orderItem.getTotalPrice()));
         }
 
-        cartItemRepository.deleteByCartId(cart.getCartId());
+        cartItemRepository.deleteByCartId(cart.getId());
 
         return new OrderResponse(
-                order.getOrderId(),
+                order.getId(),
                 order.getUserId(),
                 order.getSubtotal(),
                 order.getTax(),
@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new OrderResponse(
-                order.getOrderId(),
+                order.getId(),
                 order.getUserId(),
                 order.getSubtotal(),
                 order.getTax(),
@@ -160,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
         for (Order order : orders) {
 
             List<OrderItem> items =
-                    orderItemRepository.findByOrderId(order.getOrderId());
+                    orderItemRepository.findByOrderId(order.getId());
 
             List<OrderItemResponse> responseItems = new ArrayList<>();
 
@@ -176,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
 
             responses.add(
                     new OrderResponse(
-                            order.getOrderId(),
+                            order.getId(),
                             order.getUserId(),
                             order.getSubtotal(),
                             order.getTax(),
