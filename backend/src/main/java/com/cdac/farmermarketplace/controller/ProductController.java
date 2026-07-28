@@ -117,12 +117,12 @@ public class ProductController {
                 productService.getAvailableProducts()
         );
     }
-    @GetMapping("/search")
+   @GetMapping("/search")
 public ResponseEntity<List<ProductResponseDto>> searchProducts(
-        @RequestParam String keyword) {
-
+        @RequestParam("keyword") String keyword) {
     return ResponseEntity.ok(productService.searchProducts(keyword));
 }
+
 @GetMapping("/name/{name}")
 public ResponseEntity<ProductResponseDto> getProductByName(
         @PathVariable String name) {
@@ -150,12 +150,11 @@ public ResponseEntity<List<ProductResponseDto>> getProductsByFarmer(
 }
 @GetMapping("/price")
 public ResponseEntity<List<ProductResponseDto>> getProductsByPriceRange(
-        @RequestParam BigDecimal minPrice,
-        @RequestParam BigDecimal maxPrice) {
-
-    return ResponseEntity.ok(
-            productService.getProductsByPriceRange(minPrice, maxPrice));
+        @RequestParam("minPrice") BigDecimal minPrice,
+        @RequestParam("maxPrice") BigDecimal maxPrice) {
+    return ResponseEntity.ok(productService.getProductsByPriceRange(minPrice, maxPrice));
 }
+
 @GetMapping("/stock/{stock}")
 public ResponseEntity<List<ProductResponseDto>> getProductsByStock(
         @PathVariable Integer stock) {
