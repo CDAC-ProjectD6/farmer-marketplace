@@ -31,6 +31,11 @@ import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 
 import ProtectedRoute from "./ProtectedRoute";
+import FarmerProducts from "../pages/farmer/FarmerProducts";
+import AddProduct from "../pages/farmer/AddProduct";
+import EditProduct from "../pages/farmer/EditProduct";
+
+import ProductManagement from "../pages/admin/ProductManagement";
 
 
 function AppRoutes() {
@@ -195,6 +200,43 @@ function AppRoutes() {
           }
         />
 
+{/* Product Management */}
+
+<Route
+  path="farmer/products"
+  element={
+    <ProtectedRoute allowedRoles={["FARMER"]}>
+      <FarmerProducts />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="farmer/products/add"
+  element={
+    <ProtectedRoute allowedRoles={["FARMER"]}>
+      <AddProduct />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="farmer/products/edit/:id"
+  element={
+    <ProtectedRoute allowedRoles={["FARMER"]}>
+      <EditProduct />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="admin/products"
+  element={
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <ProductManagement />
+    </ProtectedRoute>
+  }
+/>
 
 
         {/* Static Pages */}
