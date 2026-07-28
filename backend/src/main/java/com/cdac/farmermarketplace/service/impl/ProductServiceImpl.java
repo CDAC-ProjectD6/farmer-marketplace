@@ -3,23 +3,38 @@ package com.cdac.farmermarketplace.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.cdac.farmermarketplace.dto.request.ProductRequestDto;
 import com.cdac.farmermarketplace.dto.response.ProductResponseDto;
 import com.cdac.farmermarketplace.entity.Product;
+import com.cdac.farmermarketplace.entity.User;
 import com.cdac.farmermarketplace.exception.ResourceNotFoundException;
 import com.cdac.farmermarketplace.repository.ProductRepository;
+import com.cdac.farmermarketplace.repository.UserRepository;
+import com.cdac.farmermarketplace.service.AuthorizationService;
 import com.cdac.farmermarketplace.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final AuthorizationService authorizationService;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(
+            ProductRepository productRepository,
+            UserRepository userRepository,
+            AuthorizationService authorizationService) {
+
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.authorizationService = authorizationService;
     }
+
+    // ================= CREATE PRODUCT =================
 
     @Override
     public ProductResponseDto saveProduct(ProductRequestDto requestDto) {
@@ -32,15 +47,33 @@ public class ProductServiceImpl implements ProductService {
         product.setStock(requestDto.getStock());
         product.setBrand(requestDto.getBrand());
         product.setImageUrl(requestDto.getImageUrl());
+
         product.setActive(
                 requestDto.getActive() != null
                         ? requestDto.getActive()
-                        : true);
+                        : true
+        );
 
-        Product savedProduct = productRepository.save(product);
+        // Get currently logged-in Farmer
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User farmer = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Logged-in user not found"));
+
+        // Automatically assign ownership
+        product.setFarmer(farmer);
+
+        Product savedProduct =
+                productRepository.save(product);
 
         return convertToResponse(savedProduct);
     }
+
+    // ================= UPDATE PRODUCT =================
 
     @Override
     public ProductResponseDto updateProduct(
@@ -51,6 +84,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found"));
 
+        // SECURITY CHECK FIRST
+        authorizationService.verifyProductOwnership(existingProduct);
+
+        // Only modify after authorization succeeds
         existingProduct.setName(requestDto.getName());
         existingProduct.setDescription(requestDto.getDescription());
         existingProduct.setPrice(requestDto.getPrice());
@@ -59,10 +96,13 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setImageUrl(requestDto.getImageUrl());
         existingProduct.setActive(requestDto.getActive());
 
-        Product updatedProduct = productRepository.save(existingProduct);
+        Product updatedProduct =
+                productRepository.save(existingProduct);
 
         return convertToResponse(updatedProduct);
     }
+
+    // ================= DELETE PRODUCT =================
 
     @Override
     public void deleteProduct(Long id) {
@@ -71,8 +111,13 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found"));
 
+        // SECURITY CHECK FIRST
+        authorizationService.verifyProductOwnership(product);
+
         productRepository.delete(product);
     }
+
+    // ================= GET PRODUCT =================
 
     @Override
     public ProductResponseDto getProductById(Long id) {
@@ -83,7 +128,10 @@ public class ProductServiceImpl implements ProductService {
 
         return convertToResponse(product);
     }
-        @Override
+
+    // ================= GET ALL PRODUCTS =================
+
+    @Override
     public List<ProductResponseDto> getAllProducts() {
 
         List<Product> products = productRepository.findAll();
@@ -95,6 +143,8 @@ public class ProductServiceImpl implements ProductService {
 
         return responseList;
     }
+
+    // ================= SEARCH PRODUCTS =================
 
     @Override
     public List<ProductResponseDto> searchProducts(String keyword) {
@@ -111,10 +161,13 @@ public class ProductServiceImpl implements ProductService {
         return responseList;
     }
 
+    // ================= ACTIVE PRODUCTS =================
+
     @Override
     public List<ProductResponseDto> getActiveProducts() {
 
-        List<Product> products = productRepository.findByActiveTrue();
+        List<Product> products =
+                productRepository.findByActiveTrue();
 
         List<ProductResponseDto> responseList = new ArrayList<>();
 
@@ -124,11 +177,14 @@ public class ProductServiceImpl implements ProductService {
 
         return responseList;
     }
+
+    // ================= AVAILABLE PRODUCTS =================
 
     @Override
     public List<ProductResponseDto> getAvailableProducts() {
 
-        List<Product> products = productRepository.findByStockGreaterThan(0);
+        List<Product> products =
+                productRepository.findByStockGreaterThan(0);
 
         List<ProductResponseDto> responseList = new ArrayList<>();
 
@@ -139,9 +195,7 @@ public class ProductServiceImpl implements ProductService {
         return responseList;
     }
 
-    // ==========================================
-    // Convert Entity to Response DTO
-    // ==========================================
+    // ================= ENTITY -> DTO =================
 
     private ProductResponseDto convertToResponse(Product product) {
 
@@ -160,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
         // dto.setCategoryId(product.getCategory().getId());
         // dto.setCategoryName(product.getCategory().getName());
 
-        // Uncomment after User entity is ready
+        // Can enable if ProductResponseDto contains these fields
         // dto.setFarmerId(product.getFarmer().getId());
         // dto.setFarmerName(product.getFarmer().getName());
 
@@ -169,5 +223,4 @@ public class ProductServiceImpl implements ProductService {
 
         return dto;
     }
-
 }
