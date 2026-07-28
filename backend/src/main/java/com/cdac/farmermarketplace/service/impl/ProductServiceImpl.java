@@ -2,6 +2,7 @@ package com.cdac.farmermarketplace.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.cdac.farmermarketplace.dto.request.ProductRequestDto;
 import com.cdac.farmermarketplace.dto.response.ProductResponseDto;
+import com.cdac.farmermarketplace.entity.Category;
 import com.cdac.farmermarketplace.entity.Product;
 import com.cdac.farmermarketplace.entity.User;
 import com.cdac.farmermarketplace.exception.ResourceNotFoundException;
+import com.cdac.farmermarketplace.repository.CategoryRepository;
 import com.cdac.farmermarketplace.repository.ProductRepository;
 import com.cdac.farmermarketplace.repository.UserRepository;
 import com.cdac.farmermarketplace.service.AuthorizationService;
@@ -22,15 +25,18 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final AuthorizationService authorizationService;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
             UserRepository userRepository,
+            CategoryRepository categoryRepository,
             AuthorizationService authorizationService) {
 
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
         this.authorizationService = authorizationService;
     }
 
@@ -48,13 +54,18 @@ public class ProductServiceImpl implements ProductService {
         product.setBrand(requestDto.getBrand());
         product.setImageUrl(requestDto.getImageUrl());
 
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found"));
+
+        product.setCategory(category);
+
         product.setActive(
                 requestDto.getActive() != null
                         ? requestDto.getActive()
                         : true
         );
 
-        // Get currently logged-in Farmer
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
@@ -64,16 +75,13 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new RuntimeException("Logged-in user not found"));
 
-        // Automatically assign ownership
         product.setFarmer(farmer);
 
-        Product savedProduct =
-                productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
 
         return convertToResponse(savedProduct);
     }
-
-    // ================= UPDATE PRODUCT =================
+        // ================= UPDATE PRODUCT =================
 
     @Override
     public ProductResponseDto updateProduct(
@@ -84,20 +92,25 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found"));
 
-        // SECURITY CHECK FIRST
+        // SECURITY CHECK
         authorizationService.verifyProductOwnership(existingProduct);
 
-        // Only modify after authorization succeeds
         existingProduct.setName(requestDto.getName());
         existingProduct.setDescription(requestDto.getDescription());
         existingProduct.setPrice(requestDto.getPrice());
         existingProduct.setStock(requestDto.getStock());
         existingProduct.setBrand(requestDto.getBrand());
         existingProduct.setImageUrl(requestDto.getImageUrl());
+
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found"));
+
+        existingProduct.setCategory(category);
+
         existingProduct.setActive(requestDto.getActive());
 
-        Product updatedProduct =
-                productRepository.save(existingProduct);
+        Product updatedProduct = productRepository.save(existingProduct);
 
         return convertToResponse(updatedProduct);
     }
@@ -111,7 +124,6 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found"));
 
-        // SECURITY CHECK FIRST
         authorizationService.verifyProductOwnership(product);
 
         productRepository.delete(product);
@@ -144,6 +156,70 @@ public class ProductServiceImpl implements ProductService {
         return responseList;
     }
 
+    // ================= GET PRODUCT BY NAME =================
+
+@Override
+public ProductResponseDto getProductByName(String name) {
+
+    Product product = productRepository.findByName(name)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Product not found"));
+
+    return convertToResponse(product);
+}
+
+// ================= PRODUCTS BY CATEGORY NAME =================
+
+@Override
+public List<ProductResponseDto> getProductsByCategoryName(String categoryName) {
+
+    List<Product> products =
+            productRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+
+    List<ProductResponseDto> responseList = new ArrayList<>();
+
+    for (Product product : products) {
+        responseList.add(convertToResponse(product));
+    }
+
+    return responseList;
+}
+
+// ================= PRODUCTS BY PRICE RANGE =================
+
+@Override
+public List<ProductResponseDto> getProductsByPriceRange(
+        BigDecimal minPrice,
+        BigDecimal maxPrice) {
+
+    List<Product> products =
+            productRepository.findByPriceBetween(minPrice, maxPrice);
+
+    List<ProductResponseDto> responseList = new ArrayList<>();
+
+    for (Product product : products) {
+        responseList.add(convertToResponse(product));
+    }
+
+    return responseList;
+}
+
+// ================= PRODUCTS BY STOCK =================
+
+@Override
+public List<ProductResponseDto> getProductsByStock(Integer stock) {
+
+    List<Product> products =
+            productRepository.findByStock(stock);
+
+    List<ProductResponseDto> responseList = new ArrayList<>();
+
+    for (Product product : products) {
+        responseList.add(convertToResponse(product));
+    }
+
+    return responseList;
+}
     // ================= SEARCH PRODUCTS =================
 
     @Override
@@ -194,6 +270,37 @@ public class ProductServiceImpl implements ProductService {
 
         return responseList;
     }
+        // ================= PRODUCTS BY CATEGORY =================
+
+    @Override
+    public List<ProductResponseDto> getProductsByCategory(Long categoryId) {
+
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+
+        List<ProductResponseDto> responseList = new ArrayList<>();
+
+        for (Product product : products) {
+            responseList.add(convertToResponse(product));
+        }
+
+        return responseList;
+    }
+
+    // ================= PRODUCTS BY FARMER =================
+
+    @Override
+    public List<ProductResponseDto> getProductsByFarmer(Long farmerId) {
+
+        List<Product> products = productRepository.findByFarmerId(farmerId);
+
+        List<ProductResponseDto> responseList = new ArrayList<>();
+
+        for (Product product : products) {
+            responseList.add(convertToResponse(product));
+        }
+
+        return responseList;
+    }
 
     // ================= ENTITY -> DTO =================
 
@@ -210,13 +317,15 @@ public class ProductServiceImpl implements ProductService {
         dto.setImageUrl(product.getImageUrl());
         dto.setActive(product.getActive());
 
-        // Uncomment after Category entity is ready
-        // dto.setCategoryId(product.getCategory().getId());
-        // dto.setCategoryName(product.getCategory().getName());
+        if (product.getCategory() != null) {
+            dto.setCategoryId(product.getCategory().getId());
+            dto.setCategoryName(product.getCategory().getName());
+        }
 
-        // Can enable if ProductResponseDto contains these fields
-        // dto.setFarmerId(product.getFarmer().getId());
-        // dto.setFarmerName(product.getFarmer().getName());
+        if (product.getFarmer() != null) {
+            dto.setFarmerId(product.getFarmer().getId());
+            dto.setFarmerName(product.getFarmer().getName());
+        }
 
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());

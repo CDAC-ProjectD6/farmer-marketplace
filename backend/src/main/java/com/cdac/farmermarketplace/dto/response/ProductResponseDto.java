@@ -1,5 +1,5 @@
 package com.cdac.farmermarketplace.dto.response;
- 
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,7 +21,11 @@ public class ProductResponseDto {
 
     private Boolean active;
 
+    private Long categoryId;
+
     private String categoryName;
+
+    private Long farmerId;
 
     private String farmerName;
 
@@ -31,6 +35,10 @@ public class ProductResponseDto {
 
     public ProductResponseDto() {
     }
+
+    // =========================
+    // Getters and Setters
+    // =========================
 
     public Long getId() {
         return id;
@@ -96,12 +104,28 @@ public class ProductResponseDto {
         this.active = active;
     }
 
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public Long getFarmerId() {
+        return farmerId;
+    }
+
+    public void setFarmerId(Long farmerId) {
+        this.farmerId = farmerId;
     }
 
     public String getFarmerName() {
