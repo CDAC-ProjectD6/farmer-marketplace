@@ -1,8 +1,9 @@
-<<<<<<< HEAD
-/.metadata/
-=======
-.metadata/
-.vscode/
+# Eclipse
+backend/.metadata/
+
+# IDE
 .idea/
-*.log
->>>>>>> develop
+*.iml
+.project
+.classpath
+.settings/
