@@ -2,271 +2,629 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
-  getAllFarmers,
-  getPendingFarmers,
+  getFarmers,
   approveFarmer,
   rejectFarmer,
-} from "../../services/farmerApprovalService";
+} from "../../services/adminFarmerService";
+
 
 function Farmers() {
+
   const [farmers, setFarmers] = useState([]);
-  const [status, setStatus] = useState("PENDING");
+
+  const [search, setSearch] = useState("");
+
+  const [status, setStatus] = useState("");
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
+
+  const [message, setMessage] = useState("");
+
+  const [processingId, setProcessingId] = useState(null);
+
+
 
   // ================= LOAD FARMERS =================
 
   const loadFarmers = async () => {
-  try {
-    setLoading(true);
-    setError("");
 
-    let data;
+    try {
 
-    if (status === "ALL") {
-      data = await getAllFarmers();
-    } else if (status === "PENDING") {
-      data = await getPendingFarmers();
-    } else {
-      // Until backend provides separate APIs for APPROVED/REJECTED,
-      // get all farmers and filter on the frontend.
-      data = await getAllFarmers();
+      setLoading(true);
+      setError("");
 
-      data = data.filter(
-        (farmer) => farmer.approvalStatus === status
+      const data = await getFarmers(
+        search,
+        status
       );
+
+      setFarmers(data || []);
+
+    }
+    catch(err){
+
+      console.error(err);
+
+      setError(
+        err.response?.data?.message ||
+        "Unable to load farmers."
+      );
+
+    }
+    finally{
+
+      setLoading(false);
+
     }
 
-    setFarmers(data);
-  } catch (err) {
-    setError(
-      err.response?.data?.message ||
-      "Failed to load farmers"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-  useEffect(() => {
+  };
+
+
+
+  useEffect(()=>{
+
     loadFarmers();
-  }, [status]);
+
+  },[]);
+
+
+
+
+  // ================= SEARCH =================
+
+  const handleSearch = (e)=>{
+
+    e.preventDefault();
+
+    loadFarmers();
+
+  };
+
+
+
+
+  // ================= FILTER =================
+
+  const handleStatusChange = (e)=>{
+
+    const value = e.target.value;
+
+    setStatus(value);
+
+    setTimeout(()=>{
+      loadFarmers();
+    },100);
+
+  };
+
+
+
 
   // ================= APPROVE =================
 
-  const handleApprove = async (id) => {
-    const confirmed = window.confirm(
-      "Approve this farmer?"
-    );
+  const handleApprove = async(id)=>{
 
-    if (!confirmed) return;
 
-    try {
+    if(
+      !window.confirm(
+        "Approve this farmer?"
+      )
+    )
+    return;
+
+
+
+    try{
+
+      setProcessingId(id);
+
       await approveFarmer(id);
-      await loadFarmers();
-    } catch (err) {
-      alert(
-        err.response?.data?.message ||
-          "Failed to approve farmer"
+
+
+      setMessage(
+        "Farmer approved successfully."
       );
+
+
+      loadFarmers();
+
+
     }
+    catch(err){
+
+      setError(
+        err.response?.data?.message ||
+        "Unable to approve farmer."
+      );
+
+    }
+    finally{
+
+      setProcessingId(null);
+
+    }
+
+
   };
+
+
+
+
 
   // ================= REJECT =================
 
-  const handleReject = async (id) => {
-    const confirmed = window.confirm(
-      "Reject this farmer?"
-    );
 
-    if (!confirmed) return;
+  const handleReject = async(id)=>{
 
-    try {
+
+    if(
+      !window.confirm(
+        "Reject this farmer?"
+      )
+    )
+    return;
+
+
+
+    try{
+
+      setProcessingId(id);
+
+
       await rejectFarmer(id);
-      await loadFarmers();
-    } catch (err) {
-      alert(
-        err.response?.data?.message ||
-          "Failed to reject farmer"
+
+
+
+      setMessage(
+        "Farmer rejected successfully."
       );
+
+
+      loadFarmers();
+
+
     }
+    catch(err){
+
+      setError(
+        err.response?.data?.message ||
+        "Unable to reject farmer."
+      );
+
+    }
+    finally{
+
+      setProcessingId(null);
+
+    }
+
+
   };
 
+
+
+
+
+  const getStatusBadge = (value)=>{
+
+    switch(value){
+
+      case "APPROVED":
+        return "bg-success";
+
+      case "REJECTED":
+        return "bg-danger";
+
+      case "PENDING":
+        return "bg-warning text-dark";
+
+      default:
+        return "bg-secondary";
+
+    }
+
+  };
+
+
+
+
+
   return (
+
     <div className="container py-4">
 
-      {/* Heading */}
 
       <div className="mb-4">
-        <h2>Farmer Approval</h2>
+
+        <h2 className="fw-bold">
+          Farmer Approval
+        </h2>
+
         <p className="text-muted">
-          Review and approve farmer registrations.
+          Review and manage farmer registrations.
         </p>
+
       </div>
 
-      {/* Filter */}
+
+
+
+
+      {
+        message &&
+
+        <div className="alert alert-success">
+
+          {message}
+
+        </div>
+
+      }
+
+
+
+
+      {
+        error &&
+
+        <div className="alert alert-danger">
+
+          {error}
+
+        </div>
+
+      }
+
+
+
+
+
+
+      {/* SEARCH FILTER */}
 
       <div className="card shadow-sm mb-4">
+
         <div className="card-body">
 
-          <div className="row">
 
-            <div className="col-md-4">
+          <form
+            onSubmit={handleSearch}
+            className="row g-3"
+          >
+
+
+            <div className="col-md-6">
 
               <label className="form-label">
-                Approval Status
+                Search Farmer
               </label>
 
-              <select
-                className="form-select"
-                value={status}
-                onChange={(e) =>
-                  setStatus(e.target.value)
+
+              <input
+
+                className="form-control"
+
+                placeholder="Name or email"
+
+                value={search}
+
+                onChange={(e)=>
+                  setSearch(e.target.value)
                 }
+
+              />
+
+            </div>
+
+
+
+
+            <div className="col-md-3">
+
+
+              <label className="form-label">
+                Status
+              </label>
+
+
+              <select
+
+                className="form-select"
+
+                value={status}
+
+                onChange={handleStatusChange}
+
               >
-                <option value="ALL">All</option>
+
+                <option value="">
+                  All
+                </option>
+
                 <option value="PENDING">
                   Pending
                 </option>
+
                 <option value="APPROVED">
                   Approved
                 </option>
+
                 <option value="REJECTED">
                   Rejected
                 </option>
 
+
               </select>
 
+
             </div>
 
-          </div>
+
+
+
+            <div className="col-md-3 d-flex align-items-end">
+
+
+              <button
+                className="btn btn-success w-100"
+              >
+
+                Search
+
+              </button>
+
+
+            </div>
+
+
+
+          </form>
+
 
         </div>
+
       </div>
 
-      {/* Error */}
 
-      {error && (
-        <div className="alert alert-danger">
-          {error}
-        </div>
-      )}
 
-      {/* Loading */}
 
-      {loading ? (
-        <div className="text-center py-5">
-          Loading farmers...
-        </div>
-      ) : (
-        <div className="card shadow-sm">
-          <div className="card-body">
 
-            <div className="table-responsive">
 
-              <table className="table table-hover align-middle">
+      {/* TABLE */}
 
-                <thead>
 
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
+      <div className="card shadow-sm">
 
-                </thead>
 
-                <tbody>
+        <div className="card-body">
 
-                  {farmers.length === 0 ? (
-                    <tr>
 
-                      <td
-                        colSpan="5"
-                        className="text-center text-muted py-4"
-                      >
-                        No farmers found.
-                      </td>
+        {
+          loading ?
 
-                    </tr>
-                  ) : (
-                    farmers.map((farmer) => (
-                      <tr key={farmer.id}>
 
-                        <td>{farmer.name}</td>
+          (
 
-                        <td>{farmer.email}</td>
+            <div className="text-center py-5">
 
-                        <td>{farmer.mobile}</td>
+              <div className="spinner-border text-success"/>
 
-                        <td>
-
-                          <span
-                            className={`badge ${
-                              farmer.approvalStatus ===
-                              "APPROVED"
-                                ? "bg-success"
-                                : farmer.approvalStatus ===
-                                  "REJECTED"
-                                ? "bg-danger"
-                                : "bg-warning text-dark"
-                            }`}
-                          >
-                            {farmer.approvalStatus}
-                          </span>
-
-                        </td>
-
-                        <td>
-
-                          <Link
-                            to={`/admin/farmers/${farmer.id}`}
-                            className="btn btn-sm btn-outline-primary me-2"
-                          >
-                            View
-                          </Link>
-
-                          {farmer.approvalStatus ===
-                            "PENDING" && (
-                            <>
-                              <button
-                                className="btn btn-sm btn-success me-2"
-                                onClick={() =>
-                                  handleApprove(farmer.id)
-                                }
-                              >
-                                Approve
-                              </button>
-
-                              <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() =>
-                                  handleReject(farmer.id)
-                                }
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-
-                        </td>
-
-                      </tr>
-                    ))
-                  )}
-
-                </tbody>
-
-              </table>
+              <p className="mt-3">
+                Loading farmers...
+              </p>
 
             </div>
 
+          )
+
+
+          :
+
+
+          (
+
+          <div className="table-responsive">
+
+
+            <table className="table table-hover align-middle">
+
+
+              <thead className="table-light">
+
+
+                <tr>
+
+                  <th>ID</th>
+
+                  <th>Name</th>
+
+                  <th>Email</th>
+
+                  <th>Mobile</th>
+
+                  <th>Status</th>
+
+                  <th>Actions</th>
+
+
+                </tr>
+
+
+              </thead>
+
+
+
+              <tbody>
+
+
+              {
+                farmers.length===0 ?
+
+
+                (
+
+                  <tr>
+
+                    <td
+                      colSpan="6"
+                      className="text-center"
+                    >
+                      No farmers found
+                    </td>
+
+                  </tr>
+
+                )
+
+
+                :
+
+
+                farmers.map((farmer)=>(
+
+
+                  <tr key={farmer.id}>
+
+
+                    <td>
+                      {farmer.id}
+                    </td>
+
+
+                    <td className="fw-semibold">
+                      {farmer.name}
+                    </td>
+
+
+                    <td>
+                      {farmer.email}
+                    </td>
+
+
+                    <td>
+                      {farmer.mobile}
+                    </td>
+
+
+                    <td>
+
+                      <span
+                        className={`badge ${getStatusBadge(
+                          farmer.approvalStatus
+                        )}`}
+                      >
+
+                        {farmer.approvalStatus}
+
+                      </span>
+
+
+                    </td>
+
+
+
+                    <td>
+
+
+                      <Link
+                        to={`/admin/farmers/${farmer.id}`}
+                        className="btn btn-sm btn-outline-primary me-2"
+                      >
+
+                        View
+
+                      </Link>
+
+
+
+                      {
+                        farmer.approvalStatus==="PENDING" &&
+
+                        <>
+
+
+                        <button
+
+                          className="btn btn-sm btn-success me-2"
+
+                          disabled={
+                            processingId===farmer.id
+                          }
+
+                          onClick={()=>
+                            handleApprove(farmer.id)
+                          }
+
+                        >
+
+                          Approve
+
+                        </button>
+
+
+
+                        <button
+
+                          className="btn btn-sm btn-danger"
+
+                          disabled={
+                            processingId===farmer.id
+                          }
+
+                          onClick={()=>
+                            handleReject(farmer.id)
+                          }
+
+                        >
+
+                          Reject
+
+                        </button>
+
+
+                        </>
+
+                      }
+
+
+                    </td>
+
+
+                  </tr>
+
+
+                ))
+
+              }
+
+
+
+              </tbody>
+
+
+            </table>
+
+
           </div>
+
+          )
+
+        }
+
+
         </div>
-      )}
+
+
+      </div>
+
+
     </div>
+
   );
+
 }
+
 
 export default Farmers;

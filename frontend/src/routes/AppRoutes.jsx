@@ -18,12 +18,14 @@ import OrderSuccess from "../pages/customer/OrderSuccess";
 import OrderTest from "../pages/customer/OrderTest";
 import ProfilePage from "../pages/customer/ProfilePage";
 
+
 // Admin pages
 import CategoryList from "../pages/admin/CategoryList";
 import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
 import Farmers from "../pages/admin/Farmers";
 import FarmerDetails from "../pages/admin/FarmerDetails";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 
 // Auth pages
 import Login from "../pages/auth/Login";
@@ -140,6 +142,21 @@ function AppRoutes() {
           path="orders-test"
           element={<OrderTest />}
         />
+
+
+        {/* Admin Dashboard */}
+
+        <Route
+          path="admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+
+
 
 
 
