@@ -1,0 +1,10 @@
+# Eclipse
+.metadata/
+backend/.metadata/
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
