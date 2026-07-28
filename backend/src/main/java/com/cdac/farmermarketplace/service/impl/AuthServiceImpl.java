@@ -10,8 +10,10 @@ import com.cdac.farmermarketplace.dto.request.ForgotPasswordRequest;
 import com.cdac.farmermarketplace.dto.request.LoginRequest;
 import com.cdac.farmermarketplace.dto.request.RefreshTokenRequest;
 import com.cdac.farmermarketplace.dto.request.RegisterRequest;
+import com.cdac.farmermarketplace.dto.request.ResetPasswordRequest;
 import com.cdac.farmermarketplace.dto.request.VerifyOtpRequest;
 import com.cdac.farmermarketplace.dto.response.LoginResponse;
+import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.entity.PasswordResetToken;
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
@@ -20,7 +22,6 @@ import com.cdac.farmermarketplace.repository.UserRepository;
 import com.cdac.farmermarketplace.service.AuthService;
 import com.cdac.farmermarketplace.service.EmailService;
 import com.cdac.farmermarketplace.service.JwtService;
-import com.cdac.farmermarketplace.dto.request.ResetPasswordRequest;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -75,6 +76,13 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(request.getRole());
         user.setActive(true);
 
+        // New farmers must be approved by Admin
+        if (request.getRole() == Role.FARMER) {
+            user.setFarmerApprovalStatus(
+                    FarmerApprovalStatus.PENDING
+            );
+        }
+
         userRepository.save(user);
     }
 
@@ -97,6 +105,9 @@ public class AuthServiceImpl implements AuthService {
         if (!user.isActive()) {
             throw new RuntimeException("User account is inactive");
         }
+
+        // Check farmer approval before generating tokens
+        validateFarmerApproval(user);
 
         String accessToken =
                 jwtService.generateAccessToken(user);
@@ -123,7 +134,8 @@ public class AuthServiceImpl implements AuthService {
 
         if (!jwtService.isRefreshTokenValid(refreshToken)) {
             throw new RuntimeException(
-                    "Invalid or expired refresh token");
+                    "Invalid or expired refresh token"
+            );
         }
 
         String email = jwtService.extractEmail(refreshToken);
@@ -135,6 +147,9 @@ public class AuthServiceImpl implements AuthService {
         if (!user.isActive()) {
             throw new RuntimeException("User account is inactive");
         }
+
+        // Prevent rejected/pending farmers from refreshing tokens
+        validateFarmerApproval(user);
 
         String newAccessToken =
                 jwtService.generateAccessToken(user);
@@ -152,6 +167,34 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    // ==================== FARMER APPROVAL VALIDATION ====================
+
+    private void validateFarmerApproval(User user) {
+
+        // Only FARMER accounts need approval
+        if (user.getRole() != Role.FARMER) {
+            return;
+        }
+
+        FarmerApprovalStatus approvalStatus =
+                user.getFarmerApprovalStatus();
+
+        if (approvalStatus == null ||
+                approvalStatus == FarmerApprovalStatus.PENDING) {
+
+            throw new RuntimeException(
+                    "Your farmer account is pending admin approval"
+            );
+        }
+
+        if (approvalStatus == FarmerApprovalStatus.REJECTED) {
+
+            throw new RuntimeException(
+                    "Your farmer registration has been rejected"
+            );
+        }
+    }
+
     // ==================== FORGOT PASSWORD ====================
 
     @Override
@@ -161,7 +204,6 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
 
-        // Generate secure 6-digit OTP
         SecureRandom random = new SecureRandom();
 
         String otp = String.format(
@@ -175,26 +217,21 @@ public class AuthServiceImpl implements AuthService {
         resetToken.setUser(user);
         resetToken.setOtp(otp);
 
-        // OTP expires after 5 minutes
         resetToken.setExpiresAt(
                 LocalDateTime.now().plusMinutes(5)
         );
 
         resetToken.setUsed(false);
 
-        // Save OTP in database
         passwordResetTokenRepository.save(resetToken);
 
-        // Send OTP through email
         emailService.sendPasswordResetOtp(
                 user.getEmail(),
                 otp
         );
     }
-    
-    
-    
- // ==================== VERIFY OTP ====================
+
+    // ==================== VERIFY OTP ====================
 
     @Override
     public void verifyOtp(VerifyOtpRequest request) {
@@ -209,19 +246,16 @@ public class AuthServiceImpl implements AuthService {
                         .orElseThrow(() ->
                                 new RuntimeException("OTP not found"));
 
-        // Check OTP
         if (!resetToken.getOtp().equals(request.getOtp())) {
             throw new RuntimeException("Invalid OTP");
         }
 
-        // Check expiry
         if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("OTP has expired");
         }
     }
-    
-    
- // ==================== RESET PASSWORD ====================
+
+    // ==================== RESET PASSWORD ====================
 
     @Override
     public void resetPassword(ResetPasswordRequest request) {
@@ -244,17 +278,16 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("OTP has expired");
         }
 
-        // Save new password using BCrypt
         user.setPassword(
-                passwordEncoder.encode(request.getNewPassword())
+                passwordEncoder.encode(
+                        request.getNewPassword()
+                )
         );
 
         userRepository.save(user);
 
-        // OTP cannot be reused
         resetToken.setUsed(true);
+
         passwordResetTokenRepository.save(resetToken);
     }
-    
- 
 }

@@ -67,7 +67,12 @@ public class SecurityConfig {
                     "/error"
                 ).permitAll()
 
-                // Public product APIs
+                // Public Category APIs
+                .requestMatchers(
+                    "/api/categories/**"
+                ).permitAll()
+
+                // Public Product APIs
                 .requestMatchers(
                     HttpMethod.GET,
                     "/api/products/**"
@@ -92,15 +97,13 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration =
-                new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
                 List.of("http://localhost:5173")
@@ -108,12 +111,12 @@ public class SecurityConfig {
 
         configuration.setAllowedMethods(
                 List.of(
-                    "GET",
-                    "POST",
-                    "PUT",
-                    "DELETE",
-                    "PATCH",
-                    "OPTIONS"
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH",
+                        "OPTIONS"
                 )
         );
 

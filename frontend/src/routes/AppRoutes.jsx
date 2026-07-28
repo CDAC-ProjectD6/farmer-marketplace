@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
+// Customer pages
 import Home from "../pages/customer/Home";
 import Products from "../pages/customer/Products";
 import ProductDetails from "../pages/customer/ProductDetails";
@@ -10,17 +11,26 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact";
 import Cart from "../pages/customer/Cart";
 import Wishlist from "../pages/customer/Wishlist";
-import OrderTest from "../pages/customer/OrderTest";
+
 import Checkout from "../pages/customer/Checkout";
 import MyOrders from "../pages/customer/MyOrders";
 import OrderDetails from "../pages/customer/OrderDetails";
+import OrderSuccess from "../pages/customer/OrderSuccess";
+import OrderTest from "../pages/customer/OrderTest";
 
+
+// Admin pages
 import CategoryList from "../pages/admin/CategoryList";
+import Users from "../pages/admin/Users";
+import UserDetails from "../pages/admin/UserDetails";
+import Farmers from "../pages/admin/Farmers";
 
+
+// Auth pages
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
-import OrderSuccess from "../pages/customer/OrderSuccess";
+
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -32,43 +42,85 @@ function AppRoutes() {
     <Routes>
 
 
-      {/* Customer Layout Routes */}
+      {/* Customer Layout */}
+
       <Route path="/" element={<MainLayout />}>
+
 
         <Route index element={<Home />} />
 
-        <Route 
-          path="products" 
-          element={<Products />} 
-        />
 
-        <Route 
-          path="products/:id" 
-          element={<ProductDetails />} 
-        />
-
-        <Route 
-  path="order-success" 
-  element={<OrderSuccess />} 
-/>
-        <Route path="checkout" element={<Checkout />} />
-        <Route 
-          path="categories" 
-          element={<Categories />} 
+        <Route
+          path="products"
+          element={<Products />}
         />
 
 
         <Route
-  path="orders"
-  element={<MyOrders />}
-/>
+          path="products/:id"
+          element={<ProductDetails />}
+        />
 
-<Route
-  path="orders/:orderId"
-  element={<OrderDetails />}
-/>
 
-        {/* Admin Route */}
+        <Route
+          path="categories"
+          element={<Categories />}
+        />
+
+
+
+        {/* Cart */}
+
+        <Route
+          path="cart"
+          element={<Cart />}
+        />
+
+
+        <Route
+          path="wishlist"
+          element={<Wishlist />}
+        />
+
+
+
+        {/* Checkout & Orders */}
+
+        <Route
+          path="checkout"
+          element={<Checkout />}
+        />
+
+
+        <Route
+          path="order-success"
+          element={<OrderSuccess />}
+        />
+
+
+        <Route
+          path="orders"
+          element={<MyOrders />}
+        />
+
+
+        <Route
+          path="orders/:orderId"
+          element={<OrderDetails />}
+        />
+
+
+        {/* Temporary API Testing */}
+
+        <Route
+          path="orders-test"
+          element={<OrderTest />}
+        />
+
+
+
+        {/* Admin Category */}
+
         <Route
           path="category-management"
           element={
@@ -79,33 +131,55 @@ function AppRoutes() {
         />
 
 
-        <Route 
-          path="about" 
-          element={<About />} 
-        />
 
-        <Route 
-          path="contact" 
-          element={<Contact />} 
-        />
+        {/* Admin Users */}
 
-
-        <Route 
-          path="cart" 
-          element={<Cart />} 
+        <Route
+          path="admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Users />
+            </ProtectedRoute>
+          }
         />
 
 
-        <Route 
-          path="wishlist" 
-          element={<Wishlist />} 
+
+        <Route
+          path="admin/users/:id"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <UserDetails />
+            </ProtectedRoute>
+          }
         />
 
 
-        {/* Temporary Order API Testing Route */}
-        <Route 
-          path="orders-test" 
-          element={<OrderTest />} 
+
+        {/* Farmer Approval */}
+
+        <Route
+          path="admin/farmers"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Farmers />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+        {/* Static Pages */}
+
+        <Route
+          path="about"
+          element={<About />}
+        />
+
+
+        <Route
+          path="contact"
+          element={<Contact />}
         />
 
 
@@ -113,23 +187,24 @@ function AppRoutes() {
 
 
 
-      {/* Authentication Routes */}
 
-      <Route 
-        path="/login" 
-        element={<Login />} 
+      {/* Authentication */}
+
+      <Route
+        path="/login"
+        element={<Login />}
       />
 
 
-      <Route 
-        path="/register" 
-        element={<Register />} 
+      <Route
+        path="/register"
+        element={<Register />}
       />
 
 
-      <Route 
-        path="/forgot-password" 
-        element={<ForgotPassword />} 
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
       />
 
 

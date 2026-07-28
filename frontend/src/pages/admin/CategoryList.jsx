@@ -1,18 +1,126 @@
 import CategoryTable from "../../components/Category/CategoryTable";
-import mockCategories from "../../data/mockCategories";
+import {
+    getAllCategories,
+    addCategory,
+    updateCategory
+} from "../../services/categoryService";
+import CategoryModal from "../../components/Category/CategoryModal";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 function CategoryList() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [sortBy, setSortBy] = useState("Default");
-    const filteredCategories = mockCategories.filter((category) => {
+    const [showModal, setShowModal] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [editingCategory, setEditingCategory] = useState(null);
+
+    useEffect(() => {
+    loadCategories();
+}, []);
+
+const loadCategories = async () => {
+    try {
+        const response = await getAllCategories();
+        setCategories(response.data);
+    } catch (error) {
+        console.error("Error loading categories:", error);
+    }
+};
+
+    const handleAddCategory = async (newCategory) => {
+
+    try {
+
+        if (editingCategory) {
+
+            await updateCategory(editingCategory.id, {
+                name: newCategory.name,
+                description: newCategory.description,
+                active: editingCategory.active
+            });
+
+        } else {
+
+            await addCategory({
+                name: newCategory.name,
+                description: newCategory.description,
+                active: true
+            });
+
+        }
+
+        await loadCategories();
+
+        setShowModal(false);
+
+        setEditingCategory(null);
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Operation failed.");
+
+    }
+
+};
+
+    const handleEditCategory = (category) => {
+        setEditingCategory(category);
+        setShowModal(true);
+    };
+
+    // const handleUpdateCategory = (updateCategory) => {
+    //     const updatedCategories = categories.map((category) => 
+    //     category.id === updateCategory.id ? updateCategory : category
+    // );
+    // setCategories(updatedCategories);
+    // setEditingCategory(null);
+    // setShowModal(false);
+    // }
+
+    const handleToggleStatus = async (id) => {
+
+    const confirmAction = window.confirm(
+        "Are you sure you want to change the category status?"
+    );
+
+    if (!confirmAction) return;
+
+    const category = categories.find(c => c.id === id);
+
+    if (!category) return;
+
+    try {
+
+        await updateCategory(id, {
+            name: category.name,
+            description: category.description,
+            active: !category.active
+        });
+
+        await loadCategories();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Failed to update category.");
+
+    }
+
+};
+    const filteredCategories = categories.filter((category) => {
         const matchesSearch = category.name
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
 
-        const matchesStatus =
-            statusFilter === "All" || category.status === statusFilter;
+       const matchesStatus =
+    statusFilter === "All" ||
+    (statusFilter === "Active" && category.active) ||
+    (statusFilter === "Inactive" && !category.active);
 
         return matchesStatus && matchesSearch;
     });
@@ -28,7 +136,7 @@ function CategoryList() {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="fw-bold mb-0">Category Management</h2>
 
-                <button className="btn btn-success">
+                <button className="btn btn-success" onClick ={() => setShowModal(true)}>
                     + Add Category
                 </button>
             </div>
@@ -99,7 +207,11 @@ function CategoryList() {
 
             </div>
             {sortedCategories.length > 0 ? (
-                <CategoryTable categories={sortedCategories} />
+                <CategoryTable 
+                categories={sortedCategories}
+                onEdit = {handleEditCategory} 
+                onToggleStatus={handleToggleStatus}
+                />
             ) : (
                 <div className="alert alert-info text-center">
                     <h5>No categories found</h5>
@@ -108,6 +220,13 @@ function CategoryList() {
                     </p>
                 </div>
             )}
+
+            <CategoryModal 
+                showModal={showModal}
+                onClose={()=> setShowModal(false)}
+                onSave={handleAddCategory}
+                editingCategory={editingCategory}
+                />
         </div>
     );
 }
