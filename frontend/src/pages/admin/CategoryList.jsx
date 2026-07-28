@@ -22,10 +22,11 @@ function CategoryList() {
 
 const loadCategories = async () => {
     try {
-        const response = await getAllCategories();
-        setCategories(response.data);
+        const data = await getAllCategories();
+        setCategories(data);
     } catch (error) {
         console.error("Error loading categories:", error);
+        setCategories([]);
     }
 };
 

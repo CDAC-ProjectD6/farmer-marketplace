@@ -25,6 +25,7 @@ import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
 import Farmers from "../pages/admin/Farmers";
 import FarmerDetails from "../pages/admin/FarmerDetails";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 
 // Auth pages
 import Login from "../pages/auth/Login";
@@ -136,6 +137,21 @@ function AppRoutes() {
           path="orders-test"
           element={<OrderTest />}
         />
+
+
+        {/* Admin Dashboard */}
+
+        <Route
+          path="admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+
+
 
 
 
