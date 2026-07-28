@@ -23,6 +23,7 @@ import CategoryList from "../pages/admin/CategoryList";
 import Users from "../pages/admin/Users";
 import UserDetails from "../pages/admin/UserDetails";
 import Farmers from "../pages/admin/Farmers";
+import FarmerDetails from "../pages/admin/FarmerDetails";
 
 // Auth pages
 import Login from "../pages/auth/Login";
@@ -31,49 +32,66 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 
 import ProtectedRoute from "./ProtectedRoute";
 
+
 function AppRoutes() {
+
   return (
+
     <Routes>
+
       {/* Customer Layout */}
+
       <Route path="/" element={<MainLayout />}>
+
         <Route index element={<Home />} />
+
 
         <Route
           path="products"
           element={<Products />}
         />
 
+
         <Route
           path="products/:id"
           element={<ProductDetails />}
         />
+
 
         <Route
           path="categories"
           element={<Categories />}
         />
 
+
         {/* Cart */}
+
         <Route
           path="cart"
           element={<Cart />}
         />
+
 
         <Route
           path="wishlist"
           element={<Wishlist />}
         />
 
+
+
         {/* Checkout & Orders */}
+
         <Route
           path="checkout"
           element={<Checkout />}
         />
 
+
         <Route
           path="order-success"
           element={<OrderSuccess />}
         />
+
 
         <Route
           path="orders"
@@ -84,6 +102,7 @@ function AppRoutes() {
           }
         />
 
+
         <Route
           path="orders/:orderId"
           element={
@@ -93,7 +112,10 @@ function AppRoutes() {
           }
         />
 
+
+
         {/* Customer Profile */}
+
         <Route
           path="profile"
           element={
@@ -105,13 +127,19 @@ function AppRoutes() {
           }
         />
 
+
+
         {/* Temporary API Testing */}
+
         <Route
           path="orders-test"
           element={<OrderTest />}
         />
 
+
+
         {/* Admin Category */}
+
         <Route
           path="category-management"
           element={
@@ -121,7 +149,10 @@ function AppRoutes() {
           }
         />
 
+
+
         {/* Admin Users */}
+
         <Route
           path="admin/users"
           element={
@@ -130,6 +161,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
 
         <Route
           path="admin/users/:id"
@@ -140,7 +172,10 @@ function AppRoutes() {
           }
         />
 
+
+
         {/* Farmer Approval */}
+
         <Route
           path="admin/farmers"
           element={
@@ -150,35 +185,59 @@ function AppRoutes() {
           }
         />
 
+
+        <Route
+          path="admin/farmers/:id"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <FarmerDetails />
+            </ProtectedRoute>
+          }
+        />
+
+
+
         {/* Static Pages */}
+
         <Route
           path="about"
           element={<About />}
         />
 
+
         <Route
           path="contact"
           element={<Contact />}
         />
+
       </Route>
 
+
+
       {/* Authentication */}
+
       <Route
         path="/login"
         element={<Login />}
       />
+
 
       <Route
         path="/register"
         element={<Register />}
       />
 
+
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
       />
+
     </Routes>
+
   );
+
 }
+
 
 export default AppRoutes;

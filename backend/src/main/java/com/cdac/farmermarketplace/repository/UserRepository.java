@@ -1,6 +1,7 @@
 package com.cdac.farmermarketplace.repository;
 
 import java.util.List;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.cdac.farmermarketplace.entity.FarmerApprovalStatus;
 import com.cdac.farmermarketplace.entity.Role;
 import com.cdac.farmermarketplace.entity.User;
-
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // ==================== AUTH ====================
@@ -38,6 +39,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
             Role role2,
             String email
     );
+<<<<<<< HEAD
+    
+    List<User> findByRoleAndApprovalStatus(
+            Role role,
+            FarmerApprovalStatus approvalStatus
+    );
+
+    Optional<User> findByIdAndRole(
+            Long id,
+            Role role
+=======
 
 
     // ==================== FARMER APPROVAL ====================
@@ -57,5 +69,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             Role role2,
             FarmerApprovalStatus status2,
             String email
+>>>>>>> develop
     );
 }

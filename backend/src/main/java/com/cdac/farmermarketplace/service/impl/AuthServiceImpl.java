@@ -1,6 +1,8 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.security.SecureRandom;
+import com.cdac.farmermarketplace.enums.FarmerApprovalStatus;
+
 import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,6 +53,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterRequest request) {
 
+//    	System.out.println("Admin Email = " + adminEmail);
+//    	System.out.println("Exists = " + userRepository.existsByEmail(adminEmail));
+    	
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email is already registered");
         }
@@ -76,11 +81,18 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(request.getRole());
         user.setActive(true);
 
+<<<<<<< HEAD
+        if (request.getRole() == Role.FARMER) {
+        	user.setApprovalStatus(FarmerApprovalStatus.PENDING);
+        } else {
+        	user.setApprovalStatus(FarmerApprovalStatus.APPROVED);
+=======
         // New farmers must be approved by Admin
         if (request.getRole() == Role.FARMER) {
             user.setFarmerApprovalStatus(
                     FarmerApprovalStatus.PENDING
             );
+>>>>>>> develop
         }
 
         userRepository.save(user);
