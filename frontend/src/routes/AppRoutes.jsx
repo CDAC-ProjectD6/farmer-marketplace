@@ -48,13 +48,9 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 
 import ProtectedRoute from "./ProtectedRoute";
 
-
 function AppRoutes() {
-
   return (
-
     <Routes>
-
       {/* ================= MAIN LAYOUT ================= */}
 
       <Route path="/" element={<MainLayout />}>
@@ -101,15 +97,12 @@ function AppRoutes() {
           element={<OrderSuccess />}
         />
 
-
         {/* ================= CUSTOMER ORDERS ================= */}
 
         <Route
           path="orders"
           element={
-            <ProtectedRoute
-              allowedRoles={["CONSUMER", "FARMER"]}
-            >
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
               <MyOrders />
             </ProtectedRoute>
           }
@@ -118,14 +111,11 @@ function AppRoutes() {
         <Route
           path="orders/:orderId"
           element={
-            <ProtectedRoute
-              allowedRoles={["CONSUMER", "FARMER"]}
-            >
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
               <OrderDetails />
             </ProtectedRoute>
           }
         />
-
 
         {/* ================= PROFILE ================= */}
 
@@ -136,7 +126,7 @@ function AppRoutes() {
               allowedRoles={[
                 "CONSUMER",
                 "FARMER",
-                "ADMIN"
+                "ADMIN",
               ]}
             >
               <ProfilePage />
@@ -144,14 +134,12 @@ function AppRoutes() {
           }
         />
 
-
         {/* ================= TEMP TEST ================= */}
 
         <Route
           path="orders-test"
           element={<OrderTest />}
         />
-
 
         {/* ================= ADMIN DASHBOARD ================= */}
 
@@ -164,7 +152,6 @@ function AppRoutes() {
           }
         />
 
-
         {/* ================= ADMIN CATEGORY ================= */}
 
         <Route
@@ -175,7 +162,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
 
         {/* ================= ADMIN USERS ================= */}
 
@@ -190,164 +176,3 @@ function AppRoutes() {
 
         <Route
           path="admin/users/:id"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <UserDetails />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= FARMER APPROVAL ================= */}
-
-        <Route
-          path="admin/farmers"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <Farmers />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="admin/farmers/:id"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <FarmerDetails />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= FARMER PRODUCTS ================= */}
-
-        <Route
-          path="farmer/products"
-          element={
-            <ProtectedRoute allowedRoles={["FARMER"]}>
-              <FarmerProducts />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="farmer/products/add"
-          element={
-            <ProtectedRoute allowedRoles={["FARMER"]}>
-              <AddProduct />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="farmer/products/edit/:id"
-          element={
-            <ProtectedRoute allowedRoles={["FARMER"]}>
-              <EditProduct />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= FARMER ORDERS ================= */}
-
-        <Route
-          path="farmer/orders"
-          element={
-            <ProtectedRoute allowedRoles={["FARMER"]}>
-              <FarmerOrders />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="farmer/orders/:orderId"
-          element={
-            <ProtectedRoute allowedRoles={["FARMER"]}>
-              <FarmerOrderDetails />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= ADMIN PRODUCTS ================= */}
-
-        <Route
-          path="admin/products"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <ProductManagement />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="admin/products/:id"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <ProductDetailsAdmin />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= ADMIN ORDERS ================= */}
-
-        <Route
-          path="admin/orders"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <OrdersAdmin />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="admin/orders/:orderId"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <OrderDetailsAdmin />
-            </ProtectedRoute>
-          }
-        />
-
-
-        {/* ================= STATIC PAGES ================= */}
-
-        <Route
-          path="about"
-          element={<About />}
-        />
-
-        <Route
-          path="contact"
-          element={<Contact />}
-        />
-
-      </Route>
-
-
-      {/* ================= AUTHENTICATION ================= */}
-
-      <Route
-        path="/login"
-        element={<Login />}
-      />
-
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
-      <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
-      />
-
-    </Routes>
-
-  );
-}
-
-
-export default AppRoutes;
