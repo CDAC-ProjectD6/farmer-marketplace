@@ -1,10 +1,23 @@
 import "./CategoryCard.css";
-
+const categoryImages = {
+    Fruits: "/categoryImage/fruit.jpeg",
+    Vegetables: "/categoryImage/vegetable.jpeg",
+    Grains: "/categoryImage/grains.jpeg",
+    Spices: "/categoryImage/spices.jpeg",
+    Flowers: "/categoryImage/flower.jpeg",
+    "Dry Fruits": "/categoryImage/dryfruit.jpeg",
+    "Organic Products": "/categoryImage/organic.jpeg",
+    Dairy: "/categoryImage/dairy.jpeg"
+};
 const CategoryCard = ({ category }) => {
     return (
         <div className="category-card">
 
-            <h1>{category.image}</h1>
+            <img
+    src={categoryImages[category.name]}
+    alt={category.name}
+    className="category-image"
+/>
 
             <h4>{category.name}</h4>
 
