@@ -1,6 +1,7 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.util.List;
+import com.cdac.farmermarketplace.service.NotificationService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,16 @@ import com.cdac.farmermarketplace.service.AdminFarmerService;
 @Transactional
 public class AdminFarmerServiceImpl implements AdminFarmerService {
 
-    private final UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final NotificationService notificationService;
 
-    public AdminFarmerServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	public AdminFarmerServiceImpl(
+	        UserRepository userRepository,
+	        NotificationService notificationService) {
+
+	    this.userRepository = userRepository;
+	    this.notificationService = notificationService;
+	}
 
     // ==================== GET ALL FARMERS ====================
 
@@ -129,6 +135,12 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
 
         User savedFarmer = userRepository.save(farmer);
 
+        notificationService.createNotification(
+                savedFarmer,
+                "Farmer Approved",
+                "Congratulations! Your farmer account has been approved."
+        );
+
         return convertToDto(savedFarmer);
     }
 
@@ -152,6 +164,12 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
         );
 
         User savedFarmer = userRepository.save(farmer);
+
+        notificationService.createNotification(
+                savedFarmer,
+                "Farmer Rejected",
+                "Your farmer account approval request has been rejected."
+        );
 
         return convertToDto(savedFarmer);
     }

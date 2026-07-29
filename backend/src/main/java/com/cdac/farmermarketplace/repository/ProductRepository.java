@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,8 @@ import com.cdac.farmermarketplace.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    // ================= NORMAL PRODUCT MANAGEMENT =================
 
     // Find by product name
     Optional<Product> findByName(String name);
@@ -44,6 +48,29 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Get products by farmer ID
     List<Product> findByFarmerId(Long farmerId);
+
+
+    // ================= ADMIN PRODUCT MANAGEMENT =================
+
+    // Search by product name + pagination
+    Page<Product> findByNameContainingIgnoreCase(
+            String keyword,
+            Pageable pageable
+    );
+
+    // Filter active/inactive + pagination
+    Page<Product> findByActive(
+            Boolean active,
+            Pageable pageable
+    );
+
+    // Search + active/inactive filter + pagination
+    Page<Product> findByNameContainingIgnoreCaseAndActive(
+            String keyword,
+            Boolean active,
+            Pageable pageable
+    );
+
 
     // ================= ADMIN DASHBOARD =================
 
