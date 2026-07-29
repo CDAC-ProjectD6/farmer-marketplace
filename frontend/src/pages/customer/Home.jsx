@@ -9,9 +9,7 @@ import {
   getAvailableProducts,
 } from "../../services/productService";
 
-import {
-  addToWishlist,
-} from "../../services/wishlistService";
+import wishlistService from "../../services/wishlistService";
 
 
 function Home() {
@@ -26,7 +24,8 @@ function Home() {
   const [wishlistMessage, setWishlistMessage] = useState("");
 
 
-  // ==================== LOAD HOME DATA ====================
+
+  // ================= LOAD HOME DATA =================
 
   useEffect(() => {
 
@@ -41,7 +40,7 @@ function Home() {
           productData
         ] = await Promise.all([
           getActiveCategories(),
-          getAvailableProducts(),
+          getAvailableProducts()
         ]);
 
 
@@ -50,14 +49,15 @@ function Home() {
         setProducts(productData || []);
 
 
-      } catch (err) {
+      } catch(error) {
 
         console.error(
           "Unable to load home page:",
-          err
+          error
         );
 
-      } finally {
+      }
+      finally {
 
         setLoading(false);
 
@@ -73,17 +73,17 @@ function Home() {
 
 
 
-  // Show maximum 8 products
-
-  const featuredProducts =
-    products.slice(0,8);
 
 
+  const featuredProducts = products.slice(0,8);
 
-  // ==================== CATEGORY CLICK ====================
 
 
-  const handleCategoryClick = (categoryId)=>{
+
+
+  // ================= CATEGORY CLICK =================
+
+  const handleCategoryClick = (categoryId) => {
 
     navigate(
       `/products?category=${categoryId}`
@@ -93,12 +93,14 @@ function Home() {
 
 
 
-  // ==================== ADD TO WISHLIST ====================
 
+
+  // ================= ADD WISHLIST =================
 
   const handleAddWishlist = async(productId)=>{
 
-    try{
+    try {
+
 
       const email =
         localStorage.getItem("email");
@@ -117,15 +119,15 @@ function Home() {
       }
 
 
-      await addToWishlist(
-        productId,
-        email
-      );
+
+   await wishlistService.addToWishlist(productId);
+
 
 
       setWishlistMessage(
         "Product added to wishlist ❤️"
       );
+
 
 
       setTimeout(()=>{
@@ -136,19 +138,29 @@ function Home() {
 
 
 
-    }catch(err){
+    }
+    catch(error){
 
-      console.error(err);
+      console.error(
+        "Wishlist error:",
+        error
+      );
 
 
       alert(
-        err.response?.data?.message ||
+        error.response?.data?.message ||
         "Unable to add wishlist"
       );
 
+
     }
 
+
   };
+
+
+
+
 
 
 
@@ -157,8 +169,7 @@ function Home() {
     <div>
 
 
-      {/* ==================== HERO SECTION ==================== */}
-
+      {/* HERO */}
 
       <section className="bg-light py-5">
 
@@ -192,13 +203,14 @@ function Home() {
               </h1>
 
 
+
               <p className="lead text-muted mb-4">
 
                 Discover fresh farm products directly
-                from local farmers. Simple, fresh and
-                reliable.
+                from local farmers.
 
               </p>
+
 
 
 
@@ -215,6 +227,7 @@ function Home() {
                 </Link>
 
 
+
                 <Link
                   to="/categories"
                   className="btn btn-outline-success btn-lg"
@@ -225,6 +238,7 @@ function Home() {
                 </Link>
 
 
+
               </div>
 
 
@@ -232,7 +246,9 @@ function Home() {
 
 
 
-            <div className="col-lg-5 text-center mt-5 mt-lg-0">
+
+
+            <div className="col-lg-5 text-center mt-4">
 
 
               <div
@@ -252,372 +268,445 @@ function Home() {
 
           </div>
 
-
         </div>
-
 
       </section>
 
-      {/* ==================== CATEGORIES ==================== */}
+
+
+
+
+
+      {/* CATEGORIES */}
 
       <section className="py-5">
 
         <div className="container">
 
-          <div className="d-flex justify-content-between align-items-center mb-4">
 
-            <div>
+          <h2 className="fw-bold mb-4">
 
-              <h2 className="fw-bold mb-1">
-                Browse Categories
-              </h2>
+            Browse Categories
 
-              <p className="text-muted mb-0">
-                Explore fresh categories from local farmers.
-              </p>
+          </h2>
 
-            </div>
 
 
-            <Link
-              to="/categories"
-              className="text-success text-decoration-none fw-semibold"
-            >
+          {
+            categories.length === 0 ?
 
-              View All Categories
 
-            </Link>
+            (
 
-          </div>
+              <div className="alert alert-light border">
 
+                No categories available.
 
-          {categories.length === 0 ? (
+              </div>
 
-            <div className="alert alert-light border text-center">
+            )
 
-              No categories currently available.
 
-            </div>
+            :
 
-          ) : (
 
-            <div className="row g-3">
+            (
 
-              {categories.map((category)=>(
+              <div className="row g-3">
 
-                <div
-                  className="col-sm-6 col-md-4 col-lg-3"
-                  key={category.id || category._id}
-                >
 
-                  <button
-                    type="button"
-                    className="btn btn-outline-success w-100 h-100 text-start p-4"
-                    onClick={() => handleCategoryClick(category.id || category._id)}
-                  >
+                {
+                  categories.map(category=>(
 
-                    <h5 className="fw-bold mb-1">
-                      {category.name}
-                    </h5>
 
-                    <p className="small text-muted mb-0">
-                      {category.description || "Browse products in this category."}
-                    </p>
+                    <div
+                      className="col-md-3"
+                      key={category.id}
+                    >
 
-                  </button>
 
-                </div>
+                      <button
 
-              ))}
+                        className="btn btn-outline-success w-100 p-4 text-start"
 
-            </div>
+                        onClick={() =>
+                          handleCategoryClick(
+                            category.id
+                          )
+                        }
 
-          )}
+                      >
 
-        </div>
 
-      </section>
+                        <h5 className="fw-bold">
 
-      {/* ==================== PRODUCTS ==================== */}
+                          {category.name}
 
-<section className="bg-light py-5">
+                        </h5>
 
-  <div className="container">
 
+                        <small>
 
-    <div className="d-flex justify-content-between align-items-center mb-4">
+                          {category.description ||
+                          "View products"}
 
-      <div>
+                        </small>
 
-        <h2 className="fw-bold mb-1">
-          Fresh Products
-        </h2>
 
-        <p className="text-muted mb-0">
-          Available products directly from farmers.
-        </p>
+                      </button>
 
-      </div>
 
+                    </div>
 
-      <Link
-        to="/products"
-        className="text-success text-decoration-none fw-semibold"
-      >
-        View All Products
-      </Link>
 
-
-    </div>
-
-
-
-    {/* Wishlist message */}
-
-    {wishlistMessage && (
-
-      <div className="alert alert-success">
-
-        {wishlistMessage}
-
-      </div>
-
-    )}
-
-
-
-
-    {loading ? (
-
-      <div className="text-center py-5">
-
-        <div
-          className="spinner-border text-success"
-          role="status"
-        />
-
-
-        <p className="mt-2 text-muted">
-          Loading products...
-        </p>
-
-
-      </div>
-
-
-
-    ) : featuredProducts.length === 0 ? (
-
-
-      <div className="alert alert-light border text-center">
-
-        No products currently available.
-
-      </div>
-
-
-
-    ) : (
-
-
-      <div className="row g-4">
-
-
-        {featuredProducts.map((product)=>(
-
-
-          <div
-            className="col-sm-6 col-lg-3"
-            key={product.id}
-          >
-
-
-            <div className="card h-100 border-0 shadow-sm">
-
-
-
-              {/* PRODUCT IMAGE */}
-
-
-              {product.imageUrl ? (
-
-
-                <img
-
-                  src={product.imageUrl}
-
-                  alt={product.name}
-
-                  className="card-img-top"
-
-                  style={{
-
-                    height:"200px",
-
-                    objectFit:"cover"
-
-                  }}
-
-                />
-
-
-              ) : (
-
-
-                <div
-
-                  className="bg-success-subtle d-flex align-items-center justify-content-center"
-
-                  style={{
-
-                    height:"200px",
-
-                    fontSize:"60px"
-
-                  }}
-
-                >
-
-                  🥬
-
-                </div>
-
-
-              )}
-
-
-
-
-
-              <div className="card-body d-flex flex-column">
-
-
-
-                {/* CATEGORY */}
-
-
-                <span className="text-success small fw-semibold">
-
-                  {product.categoryName ||
-                    "Farm Product"}
-
-                </span>
-
-
-
-
-
-                {/* PRODUCT NAME */}
-
-
-                <h5 className="card-title fw-bold mt-1">
-
-                  {product.name}
-
-                </h5>
-
-
-
-
-
-                {/* FARMER */}
-
-
-                {product.farmerName && (
-
-                  <p className="small text-muted mb-2">
-
-                    Farmer: {product.farmerName}
-
-                  </p>
-
-                )}
-
-
-
-
-
-
-                {/* PRICE */}
-
-
-                <h5 className="text-success fw-bold">
-
-                  ₹{product.price}
-
-                </h5>
-
-
-
-
-
-                {/* STOCK */}
-
-
-                <p className="small text-muted">
-
-                  {product.stock > 0
-
-                    ? `${product.stock} available`
-
-                    : "Out of stock"}
-
-                </p>
-
-
-
-
-
-
-
-                {/* BUTTONS */}
-
-
-                <div className="mt-auto d-flex gap-2">
-
-
-                  <Link
-
-                    to={`/products/${product.id}`}
-
-                    className="btn btn-outline-success flex-fill"
-
-                  >
-
-                    View
-
-                  </Link>
-
-
-
-
-
-                  <button
-
-                    className="btn btn-success"
-
-                    disabled={product.stock <= 0}
-
-                    onClick={() =>
-                      handleAddWishlist(product.id)
-                    }
-
-                  >
-
-                    ❤️
-
-                  </button>
-
-
-
-                </div>
-
-
+                  ))
+                }
 
 
               </div>
 
 
+            )
+
+          }
+
+
+
+        </div>
+
+
+      </section>
+
+
+
+
+
+
+
+
+      {/* PRODUCTS */}
+
+      <section className="bg-light py-5">
+
+
+        <div className="container">
+
+
+          <div className="d-flex justify-content-between mb-4">
+
+
+            <h2 className="fw-bold">
+
+              Fresh Products
+
+            </h2>
+
+
+
+            <Link
+              to="/products"
+              className="text-success"
+            >
+
+              View All
+
+            </Link>
+
+
+          </div>
+
+
+
+
+          {
+            wishlistMessage &&
+
+            (
+
+              <div className="alert alert-success">
+
+                {wishlistMessage}
+
+              </div>
+
+            )
+
+          }
+
+
+
+
+
+
+          {
+            loading ?
+
+
+            (
+
+              <div className="text-center">
+
+                Loading products...
+
+              </div>
+
+            )
+
+
+            :
+
+
+            (
+
+              <div className="row g-4">
+
+
+                {
+                  featuredProducts.map(product=>(
+
+
+                    <div
+                      className="col-lg-3 col-md-4 col-sm-6"
+                      key={product.id}
+                    >
+
+
+                      <div className="card shadow-sm h-100">
+
+
+                        {
+                          product.imageUrl ?
+
+
+                          (
+
+                            <img
+
+                              src={product.imageUrl}
+
+                              alt={product.name}
+
+                              className="card-img-top"
+
+                              style={{
+                                height:"200px",
+                                objectFit:"cover"
+                              }}
+
+                            />
+
+                          )
+
+
+                          :
+
+                          (
+
+                            <div
+
+                              className="bg-success-subtle d-flex justify-content-center align-items-center"
+
+                              style={{
+                                height:"200px",
+                                fontSize:"60px"
+                              }}
+
+                            >
+
+                              🥬
+
+                            </div>
+
+                          )
+
+
+                        }
+
+
+
+
+                        <div className="card-body d-flex flex-column">
+
+
+                          <h5 className="fw-bold">
+
+                            {product.name}
+
+                          </h5>
+
+
+
+                          <p className="text-success fw-bold">
+
+                            ₹{product.price}
+
+                          </p>
+
+
+
+                          <p className="text-muted">
+
+                            Stock: {product.stock}
+
+                          </p>
+
+
+
+                          <div className="mt-auto d-flex gap-2">
+
+
+                            <Link
+
+                              to={`/products/${product.id}`}
+
+                              className="btn btn-outline-success flex-fill"
+
+                            >
+
+                              View
+
+                            </Link>
+
+
+
+                            <button
+
+                              className="btn btn-success"
+
+                              disabled={
+                                product.stock <= 0
+                              }
+
+                              onClick={() =>
+                                handleAddWishlist(
+                                  product.id
+                                )
+                              }
+
+                            >
+
+                              ❤️
+
+                            </button>
+
+
+                          </div>
+
+
+                        </div>
+
+
+                      </div>
+
+
+                    </div>
+
+
+                  ))
+                }
+
+
+              </div>
+
+
+            )
+
+          }
+
+
+
+        </div>
+
+
+      </section>
+
+
+
+
+
+
+
+      {/* WHY FARMHUB */}
+
+      <section className="py-5">
+
+        <div className="container text-center">
+
+
+          <h2 className="fw-bold mb-5">
+
+            Why Choose FarmHub?
+
+          </h2>
+
+
+
+          <div className="row g-4">
+
+
+            <div className="col-md-4">
+
+              <h1>🌱</h1>
+
+              <h5>
+
+                Fresh Products
+
+              </h5>
+
+
+              <p className="text-muted">
+
+                Fresh agricultural products.
+
+              </p>
+
+
+            </div>
+
+
+
+
+            <div className="col-md-4">
+
+              <h1>👨‍🌾</h1>
+
+              <h5>
+
+                Direct From Farmers
+
+              </h5>
+
+
+              <p className="text-muted">
+
+                Connect directly with farmers.
+
+              </p>
+
+
+            </div>
+
+
+
+
+            <div className="col-md-4">
+
+              <h1>🛒</h1>
+
+              <h5>
+
+                Easy Shopping
+
+              </h5>
+
+
+              <p className="text-muted">
+
+                Simple marketplace experience.
+
+              </p>
+
 
             </div>
 
@@ -626,204 +715,18 @@ function Home() {
           </div>
 
 
-
-        ))}
-
-
-
-      </div>
-
-
-
-    )}
-
-
-
-  </div>
-
-
-</section>
-{/* ==================== WHY FARMHUB ==================== */}
-
-<section className="py-5">
-
-  <div className="container">
-
-
-    <div className="text-center mb-5">
-
-      <h2 className="fw-bold">
-        Why Choose FarmHub?
-      </h2>
-
-
-      <p className="text-muted">
-
-        Connecting farmers and customers through
-        one simple marketplace.
-
-      </p>
-
-
-    </div>
-
-
-
-
-
-    <div className="row g-4 text-center">
-
-
-      <div className="col-md-4">
-
-
-        <div className="p-4">
-
-
-          <div
-            className="mb-3"
-            style={{
-              fontSize:"45px"
-            }}
-          >
-
-            🌱
-
-          </div>
-
-
-
-          <h5 className="fw-bold">
-
-            Fresh Products
-
-          </h5>
-
-
-
-          <p className="text-muted">
-
-            Browse fresh agricultural products
-            available directly from farmers.
-
-          </p>
-
-
-
         </div>
 
 
-      </div>
-
-
-
-
-
-      <div className="col-md-4">
-
-
-        <div className="p-4">
-
-
-          <div
-            className="mb-3"
-            style={{
-              fontSize:"45px"
-            }}
-          >
-
-            👨‍🌾
-
-          </div>
-
-
-
-          <h5 className="fw-bold">
-
-            Direct From Farmers
-
-          </h5>
-
-
-
-          <p className="text-muted">
-
-            Connect customers directly with
-            approved farmers.
-
-          </p>
-
-
-
-        </div>
-
-
-      </div>
-
-
-
-
-
-      <div className="col-md-4">
-
-
-        <div className="p-4">
-
-
-          <div
-            className="mb-3"
-            style={{
-              fontSize:"45px"
-            }}
-          >
-
-            🛒
-
-          </div>
-
-
-
-          <h5 className="fw-bold">
-
-            Easy Shopping
-
-          </h5>
-
-
-
-          <p className="text-muted">
-
-            Find products, explore categories
-            and shop from one place.
-
-          </p>
-
-
-
-        </div>
-
-
-      </div>
+      </section>
 
 
 
     </div>
-
-
-
-  </div>
-
-
-</section>
-
-
-
-
-
-</div>
 
   );
 
 }
+
 
 export default Home;

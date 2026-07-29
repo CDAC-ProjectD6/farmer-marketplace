@@ -51,8 +51,7 @@ function AppRoutes() {
       <Route path="/" element={<MainLayout />}>
 
         <Route index element={<Home />} />
-
-
+        
         <Route
           path="products"
           element={<Products />}

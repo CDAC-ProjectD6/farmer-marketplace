@@ -1,49 +1,42 @@
 import api from "./api";
 
-
-// =====================================================
-// GET USER WISHLIST
-// =====================================================
-
-export const getWishlist = async () => {
-
+const wishlistService = {
+  getWishlist: async () => {
     const email = localStorage.getItem("email");
 
-    const response = await api.get(
-        `/wishlist?email=${email}`
-    );
+    const response = await api.get("/wishlist", {
+      params: { email },
+    });
 
     return response.data;
-};
+  },
 
-
-// =====================================================
-// ADD PRODUCT TO WISHLIST
-// =====================================================
-
-export const addToWishlist = async (productId) => {
-
+  addToWishlist: async (productId) => {
     const email = localStorage.getItem("email");
 
     const response = await api.post(
-        `/wishlist/${productId}?email=${email}`
+      `/wishlist/${productId}`,
+      null,
+      {
+        params: { email },
+      }
     );
 
     return response.data;
-};
+  },
 
-
-// =====================================================
-// REMOVE PRODUCT FROM WISHLIST
-// =====================================================
-
-export const removeFromWishlist = async (productId) => {
-
+  removeFromWishlist: async (productId) => {
     const email = localStorage.getItem("email");
 
     const response = await api.delete(
-        `/wishlist/${productId}?email=${email}`
+      `/wishlist/${productId}`,
+      {
+        params: { email },
+      }
     );
 
     return response.data;
+  },
 };
+
+export default wishlistService;
