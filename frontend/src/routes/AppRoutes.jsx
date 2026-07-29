@@ -48,119 +48,58 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 
 import ProtectedRoute from "./ProtectedRoute";
 
-
 function AppRoutes() {
-
   return (
-
     <Routes>
-
-
-      {/* ================= MAIN LAYOUT ================= */}
-
       <Route path="/" element={<MainLayout />}>
 
-
-        {/* ================= CUSTOMER ================= */}
-
+        {/* CUSTOMER */}
 
         <Route index element={<Home />} />
+        <Route path="products" element={<Products />} />
+        <Route path="products/:id" element={<ProductDetails />} />
+        <Route path="categories" element={<Categories />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="wishlist" element={<Wishlist />} />
+        <Route path="checkout" element={<Checkout />} />
+        <Route path="order-success" element={<OrderSuccess />} />
 
-
-        <Route
-          path="products"
-          element={<Products />}
-        />
-
-
-        <Route
-          path="products/:id"
-          element={<ProductDetails />}
-        />
-
-
-        <Route
-          path="categories"
-          element={<Categories />}
-        />
-
-
-        <Route
-          path="cart"
-          element={<Cart />}
-        />
-
-
-        <Route
-          path="wishlist"
-          element={<Wishlist />}
-        />
-
-
-        <Route
-          path="checkout"
-          element={<Checkout />}
-        />
-
-
-        <Route
-          path="order-success"
-          element={<OrderSuccess />}
-        />
-
-
-
-        {/* ================= CUSTOMER ORDERS ================= */}
-
+        {/* CUSTOMER ORDERS */}
 
         <Route
           path="orders"
           element={
-            <ProtectedRoute allowedRoles={["CONSUMER","FARMER"]}>
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
               <MyOrders />
             </ProtectedRoute>
           }
         />
 
-
         <Route
           path="orders/:orderId"
           element={
-            <ProtectedRoute allowedRoles={["CONSUMER","FARMER"]}>
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER"]}>
               <OrderDetails />
             </ProtectedRoute>
           }
         />
 
-
-
-        {/* ================= PROFILE ================= */}
-
+        {/* PROFILE */}
 
         <Route
           path="profile"
           element={
-            <ProtectedRoute allowedRoles={[
-              "CONSUMER",
-              "FARMER",
-              "ADMIN"
-            ]}>
+            <ProtectedRoute allowedRoles={["CONSUMER", "FARMER", "ADMIN"]}>
               <ProfilePage />
             </ProtectedRoute>
           }
         />
 
+        {/* TEMP TEST */}
 
+        <Route path="orders-test" element={<OrderTest />} />
 
-        <Route
-          path="orders-test"
-          element={<OrderTest />}
-        />
-
-
-
-        {/* ================= ADMIN ================= */}
-
+        {/* ADMIN */}
 
         <Route
           path="admin/dashboard"
@@ -171,8 +110,6 @@ function AppRoutes() {
           }
         />
 
-
-
         <Route
           path="category-management"
           element={
@@ -181,10 +118,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-
-
-        {/* USERS */}
 
         <Route
           path="admin/users"
@@ -195,7 +128,6 @@ function AppRoutes() {
           }
         />
 
-
         <Route
           path="admin/users/:id"
           element={
@@ -204,11 +136,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-
-
-        {/* FARMERS */}
-
 
         <Route
           path="admin/farmers"
@@ -219,7 +146,6 @@ function AppRoutes() {
           }
         />
 
-
         <Route
           path="admin/farmers/:id"
           element={
@@ -228,11 +154,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-
-
-        {/* ADMIN PRODUCTS */}
-
 
         <Route
           path="admin/products"
@@ -243,7 +164,6 @@ function AppRoutes() {
           }
         />
 
-
         <Route
           path="admin/products/:id"
           element={
@@ -252,11 +172,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
-
-
-        {/* ADMIN ORDERS */}
-
 
         <Route
           path="admin/orders"
@@ -267,9 +182,8 @@ function AppRoutes() {
           }
         />
 
-
         <Route
-          path="admin/orders/:id"
+          path="admin/orders/:orderId"
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <OrderDetailsAdmin />
@@ -277,10 +191,7 @@ function AppRoutes() {
           }
         />
 
-
-
-        {/* ================= FARMER ================= */}
-
+        {/* FARMER */}
 
         <Route
           path="farmer/products"
@@ -291,7 +202,6 @@ function AppRoutes() {
           }
         />
 
-
         <Route
           path="farmer/products/add"
           element={
@@ -300,7 +210,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="farmer/products/edit/:id"
@@ -311,7 +220,6 @@ function AppRoutes() {
           }
         />
 
-
         <Route
           path="farmer/orders"
           element={
@@ -321,9 +229,8 @@ function AppRoutes() {
           }
         />
 
-
         <Route
-          path="farmer/orders/:id"
+          path="farmer/orders/:orderId"
           element={
             <ProtectedRoute allowedRoles={["FARMER"]}>
               <FarmerOrderDetails />
@@ -331,54 +238,20 @@ function AppRoutes() {
           }
         />
 
+        {/* STATIC */}
 
-
-        {/* STATIC PAGES */}
-
-
-        <Route
-          path="about"
-          element={<About />}
-        />
-
-
-        <Route
-          path="contact"
-          element={<Contact />}
-        />
-
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
 
       </Route>
 
+      {/* AUTH */}
 
-
-
-      {/* ================= AUTH ================= */}
-
-
-      <Route
-        path="/login"
-        element={<Login />}
-      />
-
-
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
-
-      <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
-      />
-
-
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
-
   );
-
 }
-
 
 export default AppRoutes;

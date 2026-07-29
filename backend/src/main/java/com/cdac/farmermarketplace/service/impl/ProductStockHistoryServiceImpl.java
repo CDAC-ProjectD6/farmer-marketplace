@@ -60,23 +60,25 @@ public class ProductStockHistoryServiceImpl
 
     // ================= GET STOCK HISTORY =================
 
+    // FIX: Changed method name and parameter to match interface
     @Override
-    public List<ProductStockHistory> getStockHistory(
-            Product product) {
+    public List<ProductStockHistory> getStockHistoryByProductId(
+            Long productId) {
 
-        if (product == null || product.getId() == null) {
-            throw new RuntimeException("Product ID is required");
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID is required");
         }
 
-        // Load actual product from database
+        // Load actual product from database using the ID
         Product actualProduct = productRepository
-                .findById(product.getId())
+                .findById(productId)
                 .orElseThrow(() ->
                         new RuntimeException("Product not found"));
 
         // Check actual ownership
         authorizationService.verifyProductOwnership(actualProduct);
 
+        // We can still use the existing repository method since we fetched the product
         return productStockHistoryRepository
                 .findByProduct(actualProduct);
     }

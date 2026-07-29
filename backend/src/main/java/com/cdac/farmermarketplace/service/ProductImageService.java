@@ -1,25 +1,25 @@
 package com.cdac.farmermarketplace.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.cdac.farmermarketplace.entity.Product;
-import com.cdac.farmermarketplace.entity.ProductImage;
+import com.cdac.farmermarketplace.dto.request.ProductImageRequestDto;
+import com.cdac.farmermarketplace.dto.response.ProductImageResponseDto;
 
 public interface ProductImageService {
 
-    ProductImage saveImage(ProductImage image);
+    ProductImageResponseDto saveImage(ProductImageRequestDto requestDto);
 
-    ProductImage updateImage(Long id, ProductImage image);
+    ProductImageResponseDto updateImage(Long id, ProductImageRequestDto requestDto);
 
-    Optional<ProductImage> getImageById(Long id);
+    ProductImageResponseDto getImageById(Long id);
 
-    List<ProductImage> getAllImages();
+    List<ProductImageResponseDto> getAllImages();
 
     void deleteImage(Long id);
 
-    List<ProductImage> getImagesByProduct(Product product);
+    // Changed from taking a whole Product entity to just the ID
+    List<ProductImageResponseDto> getImagesByProductId(Long productId);
 
-    List<ProductImage> getPrimaryImages();
+    List<ProductImageResponseDto> getPrimaryImages();
 
 }
