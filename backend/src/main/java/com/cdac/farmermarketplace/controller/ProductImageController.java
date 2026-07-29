@@ -7,8 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.cdac.farmermarketplace.entity.ProductImage;
+import com.cdac.farmermarketplace.dto.request.ProductImageRequestDto;
+import com.cdac.farmermarketplace.dto.response.ProductImageResponseDto;
 import com.cdac.farmermarketplace.service.ProductImageService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/product-images")
@@ -24,17 +27,17 @@ public class ProductImageController {
     // Add product image - Farmer or Admin
     @PreAuthorize("hasAnyRole('FARMER', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductImage> createImage(
-            @RequestBody ProductImage productImage) {
+    public ResponseEntity<ProductImageResponseDto> createImage(
+            @Valid @RequestBody ProductImageRequestDto requestDto) {
 
         return new ResponseEntity<>(
-                productImageService.saveImage(productImage),
+                productImageService.saveImage(requestDto),
                 HttpStatus.CREATED);
     }
 
     // View all images - Any authenticated user
     @GetMapping
-    public ResponseEntity<List<ProductImage>> getAllImages() {
+    public ResponseEntity<List<ProductImageResponseDto>> getAllImages() {
 
         return ResponseEntity.ok(
                 productImageService.getAllImages()
@@ -43,12 +46,12 @@ public class ProductImageController {
 
     // View image - Any authenticated user
     @GetMapping("/{id}")
-    public ResponseEntity<ProductImage> getImageById(
+    public ResponseEntity<ProductImageResponseDto> getImageById(
             @PathVariable Long id) {
 
-        return productImageService.getImageById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        // Assuming the service throws ResourceNotFoundException if not found, 
+        // which will be caught by your GlobalExceptionHandler.
+        return ResponseEntity.ok(productImageService.getImageById(id));
     }
 
     // Delete image - Farmer or Admin

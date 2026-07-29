@@ -1,12 +1,15 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.cdac.farmermarketplace.dto.request.ProductImageRequestDto;
+import com.cdac.farmermarketplace.dto.response.ProductImageResponseDto;
 import com.cdac.farmermarketplace.entity.Product;
 import com.cdac.farmermarketplace.entity.ProductImage;
+import com.cdac.farmermarketplace.exception.ResourceNotFoundException;
 import com.cdac.farmermarketplace.repository.ProductImageRepository;
 import com.cdac.farmermarketplace.repository.ProductRepository;
 import com.cdac.farmermarketplace.service.AuthorizationService;
@@ -23,117 +26,110 @@ public class ProductImageServiceImpl implements ProductImageService {
             ProductImageRepository productImageRepository,
             ProductRepository productRepository,
             AuthorizationService authorizationService) {
-
+        
         this.productImageRepository = productImageRepository;
         this.productRepository = productRepository;
         this.authorizationService = authorizationService;
     }
 
-    // ================= CREATE IMAGE =================
-
+    // ================== SAVE IMAGE ==================
     @Override
-    public ProductImage saveImage(ProductImage image) {
+    public ProductImageResponseDto saveImage(ProductImageRequestDto requestDto) {
+        
+        Product product = productRepository.findById(requestDto.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + requestDto.getProductId()));
 
-        if (image.getProduct() == null ||
-                image.getProduct().getId() == null) {
-
-            throw new RuntimeException("Product ID is required");
-        }
-
-        Long productId = image.getProduct().getId();
-
-        // Load actual product from database
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Product not found"));
-
-        // Farmer -> own product only
-        // Admin -> any product
+        // Ensure the logged-in user owns this product
         authorizationService.verifyProductOwnership(product);
 
-        // Use actual database product
+        ProductImage image = new ProductImage();
         image.setProduct(product);
+        image.setImageUrl(requestDto.getImageUrl());
+        image.setPrimaryImage(requestDto.getPrimaryImage());
 
-        return productImageRepository.save(image);
+        ProductImage savedImage = productImageRepository.save(image);
+        return mapToResponseDto(savedImage);
     }
 
-    // ================= UPDATE IMAGE =================
-
+    // ================== UPDATE IMAGE ==================
     @Override
-    public ProductImage updateImage(
-            Long id,
-            ProductImage image) {
+    public ProductImageResponseDto updateImage(Long id, ProductImageRequestDto requestDto) {
+        
+        ProductImage existingImage = productImageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Image not found"));
 
-        ProductImage existingImage =
-                productImageRepository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Product Image not found"
-                                ));
+        // Check ownership of the product this image belongs to
+        authorizationService.verifyProductOwnership(existingImage.getProduct());
 
-        // Check ownership of actual existing product
-        authorizationService.verifyProductOwnership(
-                existingImage.getProduct()
-        );
+        existingImage.setImageUrl(requestDto.getImageUrl());
+        existingImage.setPrimaryImage(requestDto.getPrimaryImage());
+        
+        // If they want to move it to a different product (rare, but supported by DTO)
+        if (!existingImage.getProduct().getId().equals(requestDto.getProductId())) {
+            Product newProduct = productRepository.findById(requestDto.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("New Product not found"));
+            authorizationService.verifyProductOwnership(newProduct);
+            existingImage.setProduct(newProduct);
+        }
 
-        existingImage.setImageUrl(image.getImageUrl());
-        existingImage.setPrimaryImage(
-                image.getPrimaryImage()
-        );
-
-        return productImageRepository.save(existingImage);
+        ProductImage updatedImage = productImageRepository.save(existingImage);
+        return mapToResponseDto(updatedImage);
     }
 
-    // ================= GET IMAGE =================
-
+    // ================== GET BY ID ==================
     @Override
-    public Optional<ProductImage> getImageById(Long id) {
-
-        return productImageRepository.findById(id);
+    public ProductImageResponseDto getImageById(Long id) {
+        ProductImage image = productImageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Image not found"));
+        return mapToResponseDto(image);
     }
 
-    // ================= GET ALL IMAGES =================
-
+    // ================== GET ALL IMAGES ==================
     @Override
-    public List<ProductImage> getAllImages() {
-
-        return productImageRepository.findAll();
+    public List<ProductImageResponseDto> getAllImages() {
+        return productImageRepository.findAll().stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
-    // ================= DELETE IMAGE =================
-
+    // ================== DELETE IMAGE ==================
     @Override
     public void deleteImage(Long id) {
+        ProductImage image = productImageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Image not found"));
 
-        ProductImage image =
-                productImageRepository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Product Image not found"
-                                ));
-
-        // Check ownership before deleting
-        authorizationService.verifyProductOwnership(
-                image.getProduct()
-        );
+        // Ensure the logged-in user owns this product before deleting the image
+        authorizationService.verifyProductOwnership(image.getProduct());
 
         productImageRepository.delete(image);
     }
 
-    // ================= GET IMAGES BY PRODUCT =================
-
+    // ================== GET BY PRODUCT ID ==================
     @Override
-    public List<ProductImage> getImagesByProduct(
-            Product product) {
+    public List<ProductImageResponseDto> getImagesByProductId(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        return productImageRepository.findByProduct(product);
+        return productImageRepository.findByProduct(product).stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
-    // ================= GET PRIMARY IMAGES =================
-
+    // ================== GET PRIMARY IMAGES ==================
     @Override
-    public List<ProductImage> getPrimaryImages() {
+    public List<ProductImageResponseDto> getPrimaryImages() {
+        return productImageRepository.findByPrimaryImageTrue().stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
 
-        return productImageRepository.findByPrimaryImageTrue();
+    // ================== HELPER MAPPING METHOD ==================
+    private ProductImageResponseDto mapToResponseDto(ProductImage image) {
+        ProductImageResponseDto dto = new ProductImageResponseDto();
+        dto.setId(image.getId());
+        dto.setImageUrl(image.getImageUrl());
+        dto.setPrimaryImage(image.getPrimaryImage());
+        dto.setCreatedAt(image.getCreatedAt());
+        return dto;
     }
 }

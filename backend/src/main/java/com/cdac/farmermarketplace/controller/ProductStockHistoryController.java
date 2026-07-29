@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.cdac.farmermarketplace.entity.Product;
 import com.cdac.farmermarketplace.entity.ProductStockHistory;
 import com.cdac.farmermarketplace.service.ProductStockHistoryService;
 
@@ -37,13 +36,14 @@ public class ProductStockHistoryController {
     }
 
     // View stock history - Farmer or Admin
+    // FIX: Changed from @RequestBody to @PathVariable
     @PreAuthorize("hasAnyRole('FARMER', 'ADMIN')")
-    @GetMapping("/product")
+    @GetMapping("/product/{productId}")
     public ResponseEntity<List<ProductStockHistory>> getHistory(
-            @RequestBody Product product) {
+            @PathVariable Long productId) {
 
         return ResponseEntity.ok(
-                productStockHistoryService.getStockHistory(product)
+                productStockHistoryService.getStockHistoryByProductId(productId)
         );
     }
 }
