@@ -2,6 +2,7 @@ import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import cartService from "../../services/cartService";
+import NotificationBell from "../notification/NotificationBell";
 import "./Navbar.css";
 
 function Navbar() {
@@ -20,7 +21,6 @@ function Navbar() {
   // ================= LOGOUT =================
 
   const handleLogout = () => {
-
     logout();
     navigate("/");
   };
@@ -39,8 +39,7 @@ function Navbar() {
 
         try {
 
-          const cart =
-            await cartService.getCart();
+          const cart = await cartService.getCart();
 
           setCartCount(
             cart?.items?.length || 0
@@ -57,7 +56,6 @@ function Navbar() {
         }
 
       } else {
-
         setCartCount(0);
       }
     };
@@ -66,8 +64,6 @@ function Navbar() {
 
   }, [isAuthenticated, user]);
 
-
-  // ================= ACTIVE LINK =================
 
   const navLinkClass = ({ isActive }) =>
     isActive
@@ -118,8 +114,6 @@ function Navbar() {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
 
-            {/* HOME */}
-
             <li className="nav-item">
 
               <NavLink
@@ -132,8 +126,6 @@ function Navbar() {
             </li>
 
 
-            {/* PRODUCTS */}
-
             <li className="nav-item">
 
               <NavLink
@@ -145,8 +137,6 @@ function Navbar() {
 
             </li>
 
-
-            {/* CATEGORIES */}
 
             <li className="nav-item">
 
@@ -174,7 +164,6 @@ function Navbar() {
                     className={navLinkClass}
                     to="/cart"
                   >
-
                     🛒 Cart
 
                     {
@@ -235,11 +224,7 @@ function Navbar() {
                   Farmer
                 </a>
 
-
                 <ul className="dropdown-menu">
-
-
-                  {/* FARMER PRODUCTS */}
 
                   <li>
 
@@ -252,8 +237,6 @@ function Navbar() {
 
                   </li>
 
-
-                  {/* ADD PRODUCT */}
 
                   <li>
 
@@ -272,8 +255,6 @@ function Navbar() {
                   </li>
 
 
-                  {/* FARMER ORDERS */}
-
                   <li>
 
                     <Link
@@ -284,7 +265,6 @@ function Navbar() {
                     </Link>
 
                   </li>
-
 
                 </ul>
 
@@ -300,7 +280,6 @@ function Navbar() {
 
               <li className="nav-item dropdown">
 
-
                 <a
                   className="nav-link dropdown-toggle"
                   href="#"
@@ -314,8 +293,6 @@ function Navbar() {
 
                 <ul className="dropdown-menu">
 
-
-                  {/* DASHBOARD */}
 
                   <li>
 
@@ -334,8 +311,6 @@ function Navbar() {
                   </li>
 
 
-                  {/* CATEGORIES */}
-
                   <li>
 
                     <Link
@@ -347,8 +322,6 @@ function Navbar() {
 
                   </li>
 
-
-                  {/* PRODUCTS */}
 
                   <li>
 
@@ -362,8 +335,6 @@ function Navbar() {
                   </li>
 
 
-                  {/* ORDERS */}
-
                   <li>
 
                     <Link
@@ -375,8 +346,6 @@ function Navbar() {
 
                   </li>
 
-
-                  {/* USERS */}
 
                   <li>
 
@@ -390,8 +359,6 @@ function Navbar() {
                   </li>
 
 
-                  {/* FARMER APPROVAL */}
-
                   <li>
 
                     <Link
@@ -403,14 +370,13 @@ function Navbar() {
 
                   </li>
 
-
                 </ul>
 
               </li>
             }
 
 
-            {/* ================= ABOUT ================= */}
+            {/* ================= STATIC LINKS ================= */}
 
             <li className="nav-item">
 
@@ -423,8 +389,6 @@ function Navbar() {
 
             </li>
 
-
-            {/* ================= CONTACT ================= */}
 
             <li className="nav-item">
 
@@ -442,16 +406,14 @@ function Navbar() {
 
           {/* ================= RIGHT SIDE ================= */}
 
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-3">
 
 
             {/* SEARCH */}
 
             <form
               className="d-flex"
-              onSubmit={(e) =>
-                e.preventDefault()
-              }
+              onSubmit={(e) => e.preventDefault()}
             >
 
               <input
@@ -461,6 +423,15 @@ function Navbar() {
               />
 
             </form>
+
+
+            {/* ================= NOTIFICATION ================= */}
+
+            {
+              isAuthenticated && (
+                <NotificationBell />
+              )
+            }
 
 
             {/* ================= NOT LOGGED IN ================= */}
@@ -530,8 +501,6 @@ function Navbar() {
                     <hr className="dropdown-divider" />
                   </li>
 
-
-                  {/* PROFILE */}
 
                   <li>
 
@@ -622,8 +591,6 @@ function Navbar() {
                   </li>
 
 
-                  {/* LOGOUT */}
-
                   <li>
 
                     <button
@@ -641,7 +608,6 @@ function Navbar() {
               </div>
             }
 
-
           </div>
 
         </div>
@@ -649,8 +615,8 @@ function Navbar() {
       </div>
 
     </nav>
+
   );
 }
-
 
 export default Navbar;
