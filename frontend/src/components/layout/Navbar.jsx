@@ -14,19 +14,19 @@ function Navbar() {
     isAuthenticated,
   } = useAuth();
 
-
   const [cartCount, setCartCount] = useState(0);
 
 
+  // ================= LOGOUT =================
 
   const handleLogout = () => {
 
     logout();
     navigate("/");
-
   };
 
 
+  // ================= CART COUNT =================
 
   useEffect(() => {
 
@@ -42,7 +42,6 @@ function Navbar() {
           const cart =
             await cartService.getCart();
 
-
           setCartCount(
             cart?.items?.length || 0
           );
@@ -57,484 +56,600 @@ function Navbar() {
           setCartCount(0);
         }
 
-      }
+      } else {
 
+        setCartCount(0);
+      }
     };
 
-
     loadCartCount();
-
 
   }, [isAuthenticated, user]);
 
 
+  // ================= ACTIVE LINK =================
 
-  const navLinkClass = ({isActive}) =>
+  const navLinkClass = ({ isActive }) =>
     isActive
       ? "nav-link active fw-bold"
       : "nav-link";
 
 
-
   return (
 
-<nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
 
-<div className="container">
+      <div className="container">
 
 
-{/* Logo */}
+        {/* ================= LOGO ================= */}
 
-<Link
-className="navbar-brand fw-bold fs-4"
-to="/"
->
-🌾 FarmHub
-</Link>
+        <Link
+          className="navbar-brand fw-bold fs-4"
+          to="/"
+        >
+          🌾 FarmHub
+        </Link>
 
 
+        {/* ================= MOBILE BUTTON ================= */}
 
-{/* Mobile Button */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarMenu"
+          aria-controls="navbarMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-<button
-className="navbar-toggler"
-type="button"
-data-bs-toggle="collapse"
-data-bs-target="#navbarMenu"
->
 
-<span className="navbar-toggler-icon"></span>
+        <div
+          className="collapse navbar-collapse"
+          id="navbarMenu"
+        >
 
-</button>
 
+          {/* ================= LEFT MENU ================= */}
 
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
 
-<div
-className="collapse navbar-collapse"
-id="navbarMenu"
->
+            {/* HOME */}
 
+            <li className="nav-item">
 
+              <NavLink
+                className={navLinkClass}
+                to="/"
+              >
+                Home
+              </NavLink>
 
-{/* LEFT MENU */}
+            </li>
 
-<ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
+            {/* PRODUCTS */}
 
-<li className="nav-item">
+            <li className="nav-item">
 
-<NavLink
-className={navLinkClass}
-to="/"
->
-Home
-</NavLink>
+              <NavLink
+                className={navLinkClass}
+                to="/products"
+              >
+                Products
+              </NavLink>
 
-</li>
+            </li>
 
 
+            {/* CATEGORIES */}
 
-<li className="nav-item">
+            <li className="nav-item">
 
-<NavLink
-className={navLinkClass}
-to="/products"
->
-Products
-</NavLink>
+              <NavLink
+                className={navLinkClass}
+                to="/categories"
+              >
+                Categories
+              </NavLink>
 
-</li>
+            </li>
 
 
+            {/* ================= CUSTOMER MENU ================= */}
 
-<li className="nav-item">
+            {
+              isAuthenticated &&
+              user?.role === "CONSUMER" &&
 
-<NavLink
-className={navLinkClass}
-to="/categories"
->
-Categories
-</NavLink>
+              <>
 
-</li>
+                <li className="nav-item">
 
+                  <NavLink
+                    className={navLinkClass}
+                    to="/cart"
+                  >
 
+                    🛒 Cart
 
+                    {
+                      cartCount > 0 &&
 
-{/* CUSTOMER MENU */}
+                      <span className="badge bg-warning text-dark ms-1">
+                        {cartCount}
+                      </span>
+                    }
 
-{
-isAuthenticated &&
-user?.role === "CONSUMER" &&
+                  </NavLink>
 
-<>
+                </li>
 
-<li className="nav-item">
 
-<NavLink
-className={navLinkClass}
-to="/cart"
->
+                <li className="nav-item">
 
-🛒 Cart
+                  <NavLink
+                    className={navLinkClass}
+                    to="/wishlist"
+                  >
+                    ❤️ Wishlist
+                  </NavLink>
 
+                </li>
 
-{
-cartCount > 0 &&
 
-<span className="badge bg-warning text-dark ms-1">
+                <li className="nav-item">
 
-{cartCount}
+                  <NavLink
+                    className={navLinkClass}
+                    to="/orders"
+                  >
+                    My Orders
+                  </NavLink>
 
-</span>
+                </li>
 
-}
+              </>
+            }
 
 
-</NavLink>
+            {/* ================= FARMER MENU ================= */}
 
-</li>
+            {
+              isAuthenticated &&
+              user?.role === "FARMER" &&
 
+              <li className="nav-item dropdown">
 
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Farmer
+                </a>
 
-{/* WISHLIST */}
 
-<li className="nav-item">
+                <ul className="dropdown-menu">
 
-<NavLink
-className={navLinkClass}
-to="/wishlist"
->
 
-❤️ Wishlist
+                  {/* FARMER PRODUCTS */}
 
-</NavLink>
+                  <li>
 
-</li>
+                    <Link
+                      className="dropdown-item"
+                      to="/farmer/products"
+                    >
+                      🌾 Manage Products
+                    </Link>
 
+                  </li>
 
 
+                  {/* ADD PRODUCT */}
 
-<li className="nav-item">
+                  <li>
 
-<NavLink
-className={navLinkClass}
-to="/orders"
->
+                    <Link
+                      className="dropdown-item"
+                      to="/farmer/products/add"
+                    >
+                      ➕ Add Product
+                    </Link>
 
-My Orders
+                  </li>
 
-</NavLink>
 
-</li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
 
 
-</>
+                  {/* FARMER ORDERS */}
 
-}
+                  <li>
 
+                    <Link
+                      className="dropdown-item"
+                      to="/farmer/orders"
+                    >
+                      📦 Manage Orders
+                    </Link>
 
+                  </li>
 
 
+                </ul>
 
-{/* ADMIN MENU */}
+              </li>
+            }
 
-{
-isAuthenticated &&
-user?.role === "ADMIN" &&
 
-<li className="nav-item dropdown">
+            {/* ================= ADMIN MENU ================= */}
 
+            {
+              isAuthenticated &&
+              user?.role === "ADMIN" &&
 
-<a
-className="nav-link dropdown-toggle"
-href="#"
-role="button"
-data-bs-toggle="dropdown"
->
+              <li className="nav-item dropdown">
 
-Admin
 
-</a>
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Admin
+                </a>
 
 
+                <ul className="dropdown-menu">
 
-<ul className="dropdown-menu">
 
+                  {/* DASHBOARD */}
 
-<li>
+                  <li>
 
-<Link
-className="dropdown-item"
-to="/category-management"
->
-Manage Categories
-</Link>
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/dashboard"
+                    >
+                      📊 Dashboard
+                    </Link>
 
-</li>
+                  </li>
 
 
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
 
-<li>
 
-<Link
-className="dropdown-item"
-to="/admin/users"
->
-Manage Users
-</Link>
+                  {/* CATEGORIES */}
 
-</li>
+                  <li>
 
+                    <Link
+                      className="dropdown-item"
+                      to="/category-management"
+                    >
+                      Manage Categories
+                    </Link>
 
+                  </li>
 
-<li>
 
-<Link
-className="dropdown-item"
-to="/admin/farmers"
->
-Farmer Approval
-</Link>
+                  {/* PRODUCTS */}
 
-</li>
+                  <li>
 
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/products"
+                    >
+                      Manage Products
+                    </Link>
 
+                  </li>
 
-</ul>
 
+                  {/* ORDERS */}
 
-</li>
+                  <li>
 
-}
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/orders"
+                    >
+                      Manage Orders
+                    </Link>
 
+                  </li>
 
 
+                  {/* USERS */}
 
-<li className="nav-item">
+                  <li>
 
-<NavLink
-className={navLinkClass}
-to="/about"
->
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/users"
+                    >
+                      Manage Users
+                    </Link>
 
-About
+                  </li>
 
-</NavLink>
 
-</li>
+                  {/* FARMER APPROVAL */}
 
+                  <li>
 
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/farmers"
+                    >
+                      Farmer Approval
+                    </Link>
 
-<li className="nav-item">
+                  </li>
 
-<NavLink
-className={navLinkClass}
-to="/contact"
->
 
-Contact
+                </ul>
 
-</NavLink>
+              </li>
+            }
 
-</li>
 
+            {/* ================= ABOUT ================= */}
 
-</ul>
+            <li className="nav-item">
 
+              <NavLink
+                className={navLinkClass}
+                to="/about"
+              >
+                About
+              </NavLink>
 
+            </li>
 
 
+            {/* ================= CONTACT ================= */}
 
-{/* RIGHT SIDE */}
+            <li className="nav-item">
 
-<div className="d-flex align-items-center gap-2">
+              <NavLink
+                className={navLinkClass}
+                to="/contact"
+              >
+                Contact
+              </NavLink>
 
+            </li>
 
+          </ul>
 
-<form
-className="d-flex"
-onSubmit={(e)=>e.preventDefault()}
->
 
-<input
-className="form-control"
-type="search"
-placeholder="Search..."
-/>
+          {/* ================= RIGHT SIDE ================= */}
 
-</form>
+          <div className="d-flex align-items-center gap-2">
 
 
+            {/* SEARCH */}
 
+            <form
+              className="d-flex"
+              onSubmit={(e) =>
+                e.preventDefault()
+              }
+            >
 
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Search..."
+              />
 
-{/* NOT LOGGED IN */}
+            </form>
 
-{
-!isAuthenticated &&
 
-<>
+            {/* ================= NOT LOGGED IN ================= */}
 
-<Link
-className="btn btn-outline-light"
-to="/login"
->
-Login
-</Link>
+            {
+              !isAuthenticated &&
 
+              <>
 
-<Link
-className="btn btn-warning"
-to="/register"
->
-Register
-</Link>
+                <Link
+                  className="btn btn-outline-light"
+                  to="/login"
+                >
+                  Login
+                </Link>
 
 
-</>
+                <Link
+                  className="btn btn-warning"
+                  to="/register"
+                >
+                  Register
+                </Link>
 
-}
+              </>
+            }
 
 
+            {/* ================= LOGGED IN ================= */}
 
+            {
+              isAuthenticated &&
 
+              <div className="dropdown">
 
 
-{/* LOGGED IN */}
+                <button
+                  className="btn btn-light dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                >
+                  👤 {user?.name}
+                </button>
 
-{
-isAuthenticated &&
 
-<div className="dropdown">
+                <ul className="dropdown-menu dropdown-menu-end">
 
 
-<button
-className="btn btn-light dropdown-toggle"
-data-bs-toggle="dropdown"
->
+                  <li>
 
-👤 {user?.name}
+                    <span className="dropdown-item-text fw-bold">
+                      {user?.name}
+                    </span>
 
-</button>
+                  </li>
 
 
+                  <li>
 
+                    <span className="dropdown-item-text">
+                      Role: {user?.role}
+                    </span>
 
-<ul className="dropdown-menu dropdown-menu-end">
+                  </li>
 
 
-<li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
 
-<span className="dropdown-item-text fw-bold">
 
-{user?.name}
+                  {/* PROFILE */}
 
-</span>
+                  <li>
 
-</li>
+                    <Link
+                      className="dropdown-item"
+                      to="/profile"
+                    >
+                      👤 My Profile
+                    </Link>
 
+                  </li>
 
 
-<li>
+                  {/* CUSTOMER ORDERS */}
 
-<span className="dropdown-item-text">
+                  {
+                    user?.role === "CONSUMER" &&
 
-Role: {user?.role}
+                    <li>
 
-</span>
+                      <Link
+                        className="dropdown-item"
+                        to="/orders"
+                      >
+                        📦 My Orders
+                      </Link>
 
-</li>
+                    </li>
+                  }
 
 
+                  {/* FARMER PRODUCTS */}
 
-<li>
-<hr className="dropdown-divider"/>
-</li>
+                  {
+                    user?.role === "FARMER" &&
 
+                    <li>
 
+                      <Link
+                        className="dropdown-item"
+                        to="/farmer/products"
+                      >
+                        🌾 My Products
+                      </Link>
 
-<li>
+                    </li>
+                  }
 
-<Link
-className="dropdown-item"
-to="/profile"
->
 
-👤 My Profile
+                  {/* FARMER ORDERS */}
 
-</Link>
+                  {
+                    user?.role === "FARMER" &&
 
-</li>
+                    <li>
 
+                      <Link
+                        className="dropdown-item"
+                        to="/farmer/orders"
+                      >
+                        📦 Farmer Orders
+                      </Link>
 
+                    </li>
+                  }
 
 
-{
-user?.role === "CONSUMER" &&
+                  {/* ADMIN DASHBOARD */}
 
-<li>
+                  {
+                    user?.role === "ADMIN" &&
 
-<Link
-className="dropdown-item"
-to="/orders"
->
+                    <li>
 
-📦 My Orders
+                      <Link
+                        className="dropdown-item"
+                        to="/admin/dashboard"
+                      >
+                        📊 Admin Dashboard
+                      </Link>
 
-</Link>
+                    </li>
+                  }
 
-</li>
 
-}
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
 
 
+                  {/* LOGOUT */}
 
+                  <li>
 
-<li>
+                    <button
+                      className="dropdown-item text-danger"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
 
-<hr className="dropdown-divider"/>
+                  </li>
 
-</li>
 
+                </ul>
 
+              </div>
+            }
 
-<li>
 
-<button
-className="dropdown-item text-danger"
-onClick={handleLogout}
->
+          </div>
 
-Logout
+        </div>
 
-</button>
+      </div>
 
-</li>
-
-
-
-</ul>
-
-
-</div>
-
-}
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-</nav>
-
+    </nav>
   );
-
 }
 
 
