@@ -37,6 +37,8 @@ import OrderDetailsAdmin from "../pages/admin/OrderDetailsAdmin";
 import FarmerProducts from "../pages/farmer/FarmerProducts";
 import AddProduct from "../pages/farmer/AddProduct";
 import EditProduct from "../pages/farmer/EditProduct";
+import FarmerOrders from "../pages/farmer/FarmerOrders";
+import FarmerOrderDetails from "../pages/farmer/FarmerOrderDetails";
 
 // ================= AUTH PAGES =================
 
@@ -242,6 +244,27 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={["FARMER"]}>
               <EditProduct />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ================= FARMER ORDERS ================= */}
+
+        <Route
+          path="farmer/orders"
+          element={
+            <ProtectedRoute allowedRoles={["FARMER"]}>
+              <FarmerOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="farmer/orders/:orderId"
+          element={
+            <ProtectedRoute allowedRoles={["FARMER"]}>
+              <FarmerOrderDetails />
             </ProtectedRoute>
           }
         />

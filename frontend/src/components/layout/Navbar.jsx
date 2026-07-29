@@ -2,8 +2,8 @@ import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import cartService from "../../services/cartService";
-import "./Navbar.css";
 import NotificationBell from "../notification/NotificationBell";
+import "./Navbar.css";
 
 function Navbar() {
 
@@ -15,19 +15,18 @@ function Navbar() {
     isAuthenticated,
   } = useAuth();
 
-
   const [cartCount, setCartCount] = useState(0);
 
 
+  // ================= LOGOUT =================
 
   const handleLogout = () => {
-
     logout();
     navigate("/");
-
   };
 
 
+  // ================= CART COUNT =================
 
   useEffect(() => {
 
@@ -40,9 +39,7 @@ function Navbar() {
 
         try {
 
-          const cart =
-            await cartService.getCart();
-
+          const cart = await cartService.getCart();
 
           setCartCount(
             cart?.items?.length || 0
@@ -58,419 +55,568 @@ function Navbar() {
           setCartCount(0);
         }
 
+      } else {
+        setCartCount(0);
       }
-
     };
 
-
     loadCartCount();
-
 
   }, [isAuthenticated, user]);
 
 
-
-  const navLinkClass = ({isActive}) =>
+  const navLinkClass = ({ isActive }) =>
     isActive
       ? "nav-link active fw-bold"
       : "nav-link";
 
 
-
   return (
 
-<nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
 
-<div className="container">
+      <div className="container">
 
 
-{/* Logo */}
+        {/* ================= LOGO ================= */}
 
-<Link
-className="navbar-brand fw-bold fs-4"
-to="/"
->
-🌾 FarmHub
-</Link>
+        <Link
+          className="navbar-brand fw-bold fs-4"
+          to="/"
+        >
+          🌾 FarmHub
+        </Link>
 
 
+        {/* ================= MOBILE BUTTON ================= */}
 
-{/* Mobile Button */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarMenu"
+          aria-controls="navbarMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-<button
-className="navbar-toggler"
-type="button"
-data-bs-toggle="collapse"
-data-bs-target="#navbarMenu"
->
 
-<span className="navbar-toggler-icon"></span>
+        <div
+          className="collapse navbar-collapse"
+          id="navbarMenu"
+        >
 
-</button>
 
+          {/* ================= LEFT MENU ================= */}
 
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
 
-<div
-className="collapse navbar-collapse"
-id="navbarMenu"
->
+            <li className="nav-item">
 
+              <NavLink
+                className={navLinkClass}
+                to="/"
+              >
+                Home
+              </NavLink>
 
+            </li>
 
-{/* LEFT MENU */}
 
-<ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
 
+              <NavLink
+                className={navLinkClass}
+                to="/products"
+              >
+                Products
+              </NavLink>
 
-<li className="nav-item">
+            </li>
 
-<NavLink
-className={navLinkClass}
-to="/"
->
-Home
-</NavLink>
 
-</li>
+            <li className="nav-item">
 
+              <NavLink
+                className={navLinkClass}
+                to="/categories"
+              >
+                Categories
+              </NavLink>
 
+            </li>
 
-<li className="nav-item">
 
-<NavLink
-className={navLinkClass}
-to="/products"
->
-Products
-</NavLink>
+            {/* ================= CUSTOMER MENU ================= */}
 
-</li>
+            {
+              isAuthenticated &&
+              user?.role === "CONSUMER" &&
 
+              <>
 
+                <li className="nav-item">
 
-<li className="nav-item">
+                  <NavLink
+                    className={navLinkClass}
+                    to="/cart"
+                  >
+                    🛒 Cart
 
-<NavLink
-className={navLinkClass}
-to="/categories"
->
-Categories
-</NavLink>
+                    {
+                      cartCount > 0 &&
 
-</li>
+                      <span className="badge bg-warning text-dark ms-1">
+                        {cartCount}
+                      </span>
+                    }
 
+                  </NavLink>
 
-
-
-{/* CUSTOMER MENU */}
-
-{
-isAuthenticated &&
-user?.role === "CONSUMER" &&
-
-<>
-
-<li className="nav-item">
-
-<NavLink
-className={navLinkClass}
-to="/cart"
->
-
-🛒 Cart
-
-
-{
-cartCount > 0 &&
-
-<span className="badge bg-warning text-dark ms-1">
-
-{cartCount}
-
-</span>
-
-}
-
-
-</NavLink>
-
-</li>
-
-
-
-{/* WISHLIST */}
-
-<li className="nav-item">
-
-<NavLink
-className={navLinkClass}
-to="/wishlist"
->
-
-❤️ Wishlist
-
-</NavLink>
-
-</li>
-
-
-
-
-<li className="nav-item">
-
-<NavLink
-className={navLinkClass}
-to="/orders"
->
-
-My Orders
-
-</NavLink>
-
-</li>
-
-
-</>
-
-}
-
-
-
-
-
-{/* ADMIN MENU */}
-
-{
-isAuthenticated &&
-user?.role === "ADMIN" &&
-
-<li className="nav-item dropdown">
-
-
-<a
-className="nav-link dropdown-toggle"
-href="#"
-role="button"
-data-bs-toggle="dropdown"
->
-
-Admin
-
-</a>
-
-
-
-<ul className="dropdown-menu">
-
-
-<li>
-
-<Link
-className="dropdown-item"
-to="/category-management"
->
-Manage Categories
-</Link>
-
-</li>
-
-
-
-<li>
-
-<Link
-className="dropdown-item"
-to="/admin/users"
->
-Manage Users
-</Link>
-
-</li>
-
-
-
-<li>
-
-<Link
-className="dropdown-item"
-to="/admin/farmers"
->
-Farmer Approval
-</Link>
-
-</li>
-
-
-
-</ul>
-
-
-</li>
-
-}
-
-
-
-
-<li className="nav-item">
-
-<NavLink
-className={navLinkClass}
-to="/about"
->
-
-About
-
-</NavLink>
-
-</li>
-
-
-
-<li className="nav-item">
-
-<NavLink
-className={navLinkClass}
-to="/contact"
->
-
-Contact
-
-</NavLink>
-
-</li>
-
-
-</ul>
-
-
-
-
-
-{/* RIGHT SIDE */}
-
-<div className="d-flex align-items-center gap-3">
-
-    <form
-        className="d-flex"
-        onSubmit={(e) => e.preventDefault()}
-    >
-        <input
-            className="form-control"
-            type="search"
-            placeholder="Search..."
-        />
-    </form>
-
-    {
-        isAuthenticated && (
-            <NotificationBell />
-        )
-    }
-
-    {
-        !isAuthenticated &&
-
-        <>
-            <Link
-                className="btn btn-outline-light"
-                to="/login"
-            >
-                Login
-            </Link>
-
-            <Link
-                className="btn btn-warning"
-                to="/register"
-            >
-                Register
-            </Link>
-        </>
-    }
-
-    {
-        isAuthenticated &&
-
-        <div className="dropdown">
-
-            <button
-                className="btn btn-light dropdown-toggle"
-                data-bs-toggle="dropdown"
-            >
-                👤 {user?.name}
-            </button>
-
-            <ul className="dropdown-menu dropdown-menu-end">
-
-                <li>
-                    <span className="dropdown-item-text fw-bold">
-                        {user?.name}
-                    </span>
                 </li>
 
-                <li>
-                    <span className="dropdown-item-text">
-                        Role: {user?.role}
-                    </span>
+
+                <li className="nav-item">
+
+                  <NavLink
+                    className={navLinkClass}
+                    to="/wishlist"
+                  >
+                    ❤️ Wishlist
+                  </NavLink>
+
                 </li>
 
-                <li>
-                    <hr className="dropdown-divider"/>
+
+                <li className="nav-item">
+
+                  <NavLink
+                    className={navLinkClass}
+                    to="/orders"
+                  >
+                    My Orders
+                  </NavLink>
+
                 </li>
 
-                <li>
+              </>
+            }
+
+
+            {/* ================= FARMER MENU ================= */}
+
+            {
+              isAuthenticated &&
+              user?.role === "FARMER" &&
+
+              <li className="nav-item dropdown">
+
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Farmer
+                </a>
+
+                <ul className="dropdown-menu">
+
+                  <li>
+
                     <Link
-                        className="dropdown-item"
-                        to="/profile"
+                      className="dropdown-item"
+                      to="/farmer/products"
                     >
-                        👤 My Profile
+                      🌾 Manage Products
                     </Link>
-                </li>
 
-                {
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/farmer/products/add"
+                    >
+                      ➕ Add Product
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/farmer/orders"
+                    >
+                      📦 Manage Orders
+                    </Link>
+
+                  </li>
+
+                </ul>
+
+              </li>
+            }
+
+
+            {/* ================= ADMIN MENU ================= */}
+
+            {
+              isAuthenticated &&
+              user?.role === "ADMIN" &&
+
+              <li className="nav-item dropdown">
+
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Admin
+                </a>
+
+
+                <ul className="dropdown-menu">
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/dashboard"
+                    >
+                      📊 Dashboard
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/category-management"
+                    >
+                      Manage Categories
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/products"
+                    >
+                      Manage Products
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/orders"
+                    >
+                      Manage Orders
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/users"
+                    >
+                      Manage Users
+                    </Link>
+
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/admin/farmers"
+                    >
+                      Farmer Approval
+                    </Link>
+
+                  </li>
+
+                </ul>
+
+              </li>
+            }
+
+
+            {/* ================= STATIC LINKS ================= */}
+
+            <li className="nav-item">
+
+              <NavLink
+                className={navLinkClass}
+                to="/about"
+              >
+                About
+              </NavLink>
+
+            </li>
+
+
+            <li className="nav-item">
+
+              <NavLink
+                className={navLinkClass}
+                to="/contact"
+              >
+                Contact
+              </NavLink>
+
+            </li>
+
+          </ul>
+
+
+          {/* ================= RIGHT SIDE ================= */}
+
+          <div className="d-flex align-items-center gap-3">
+
+
+            {/* SEARCH */}
+
+            <form
+              className="d-flex"
+              onSubmit={(e) => e.preventDefault()}
+            >
+
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Search..."
+              />
+
+            </form>
+
+
+            {/* ================= NOTIFICATION ================= */}
+
+            {
+              isAuthenticated && (
+                <NotificationBell />
+              )
+            }
+
+
+            {/* ================= NOT LOGGED IN ================= */}
+
+            {
+              !isAuthenticated &&
+
+              <>
+
+                <Link
+                  className="btn btn-outline-light"
+                  to="/login"
+                >
+                  Login
+                </Link>
+
+
+                <Link
+                  className="btn btn-warning"
+                  to="/register"
+                >
+                  Register
+                </Link>
+
+              </>
+            }
+
+
+            {/* ================= LOGGED IN ================= */}
+
+            {
+              isAuthenticated &&
+
+              <div className="dropdown">
+
+
+                <button
+                  className="btn btn-light dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                >
+                  👤 {user?.name}
+                </button>
+
+
+                <ul className="dropdown-menu dropdown-menu-end">
+
+
+                  <li>
+
+                    <span className="dropdown-item-text fw-bold">
+                      {user?.name}
+                    </span>
+
+                  </li>
+
+
+                  <li>
+
+                    <span className="dropdown-item-text">
+                      Role: {user?.role}
+                    </span>
+
+                  </li>
+
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+
+
+                  <li>
+
+                    <Link
+                      className="dropdown-item"
+                      to="/profile"
+                    >
+                      👤 My Profile
+                    </Link>
+
+                  </li>
+
+
+                  {/* CUSTOMER ORDERS */}
+
+                  {
                     user?.role === "CONSUMER" &&
 
                     <li>
-                        <Link
-                            className="dropdown-item"
-                            to="/orders"
-                        >
-                            📦 My Orders
-                        </Link>
+
+                      <Link
+                        className="dropdown-item"
+                        to="/orders"
+                      >
+                        📦 My Orders
+                      </Link>
+
                     </li>
-                }
+                  }
 
-                <li>
-                    <hr className="dropdown-divider"/>
-                </li>
 
-                <li>
+                  {/* FARMER PRODUCTS */}
+
+                  {
+                    user?.role === "FARMER" &&
+
+                    <li>
+
+                      <Link
+                        className="dropdown-item"
+                        to="/farmer/products"
+                      >
+                        🌾 My Products
+                      </Link>
+
+                    </li>
+                  }
+
+
+                  {/* FARMER ORDERS */}
+
+                  {
+                    user?.role === "FARMER" &&
+
+                    <li>
+
+                      <Link
+                        className="dropdown-item"
+                        to="/farmer/orders"
+                      >
+                        📦 Farmer Orders
+                      </Link>
+
+                    </li>
+                  }
+
+
+                  {/* ADMIN DASHBOARD */}
+
+                  {
+                    user?.role === "ADMIN" &&
+
+                    <li>
+
+                      <Link
+                        className="dropdown-item"
+                        to="/admin/dashboard"
+                      >
+                        📊 Admin Dashboard
+                      </Link>
+
+                    </li>
+                  }
+
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+
+
+                  <li>
+
                     <button
-                        className="dropdown-item text-danger"
-                        onClick={handleLogout}
+                      className="dropdown-item text-danger"
+                      onClick={handleLogout}
                     >
-                        Logout
+                      Logout
                     </button>
-                </li>
 
-            </ul>
+                  </li>
+
+
+                </ul>
+
+              </div>
+            }
+
+          </div>
 
         </div>
-    }
 
-</div>
+      </div>
 
-</div>
-
-
-</div>
-
-</nav>
+    </nav>
 
   );
-
 }
-
 
 export default Navbar;
