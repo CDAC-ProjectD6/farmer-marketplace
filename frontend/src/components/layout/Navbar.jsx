@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import cartService from "../../services/cartService";
 import "./Navbar.css";
+import NotificationBell from "../notification/NotificationBell";
 
 function Navbar() {
 
@@ -349,182 +350,116 @@ Contact
 
 {/* RIGHT SIDE */}
 
-<div className="d-flex align-items-center gap-2">
+<div className="d-flex align-items-center gap-3">
+
+    <form
+        className="d-flex"
+        onSubmit={(e) => e.preventDefault()}
+    >
+        <input
+            className="form-control"
+            type="search"
+            placeholder="Search..."
+        />
+    </form>
+
+    {
+        isAuthenticated && (
+            <NotificationBell />
+        )
+    }
+
+    {
+        !isAuthenticated &&
+
+        <>
+            <Link
+                className="btn btn-outline-light"
+                to="/login"
+            >
+                Login
+            </Link>
+
+            <Link
+                className="btn btn-warning"
+                to="/register"
+            >
+                Register
+            </Link>
+        </>
+    }
+
+    {
+        isAuthenticated &&
+
+        <div className="dropdown">
+
+            <button
+                className="btn btn-light dropdown-toggle"
+                data-bs-toggle="dropdown"
+            >
+                👤 {user?.name}
+            </button>
+
+            <ul className="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <span className="dropdown-item-text fw-bold">
+                        {user?.name}
+                    </span>
+                </li>
+
+                <li>
+                    <span className="dropdown-item-text">
+                        Role: {user?.role}
+                    </span>
+                </li>
+
+                <li>
+                    <hr className="dropdown-divider"/>
+                </li>
+
+                <li>
+                    <Link
+                        className="dropdown-item"
+                        to="/profile"
+                    >
+                        👤 My Profile
+                    </Link>
+                </li>
+
+                {
+                    user?.role === "CONSUMER" &&
+
+                    <li>
+                        <Link
+                            className="dropdown-item"
+                            to="/orders"
+                        >
+                            📦 My Orders
+                        </Link>
+                    </li>
+                }
+
+                <li>
+                    <hr className="dropdown-divider"/>
+                </li>
+
+                <li>
+                    <button
+                        className="dropdown-item text-danger"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
+                </li>
 
+            </ul>
 
-
-<form
-className="d-flex"
-onSubmit={(e)=>e.preventDefault()}
->
-
-<input
-className="form-control"
-type="search"
-placeholder="Search..."
-/>
-
-</form>
-
-
-
-
-
-{/* NOT LOGGED IN */}
-
-{
-!isAuthenticated &&
-
-<>
-
-<Link
-className="btn btn-outline-light"
-to="/login"
->
-Login
-</Link>
-
-
-<Link
-className="btn btn-warning"
-to="/register"
->
-Register
-</Link>
-
-
-</>
-
-}
-
-
-
-
-
-
-{/* LOGGED IN */}
-
-{
-isAuthenticated &&
-
-<div className="dropdown">
-
-
-<button
-className="btn btn-light dropdown-toggle"
-data-bs-toggle="dropdown"
->
-
-👤 {user?.name}
-
-</button>
-
-
-
-
-<ul className="dropdown-menu dropdown-menu-end">
-
-
-<li>
-
-<span className="dropdown-item-text fw-bold">
-
-{user?.name}
-
-</span>
-
-</li>
-
-
-
-<li>
-
-<span className="dropdown-item-text">
-
-Role: {user?.role}
-
-</span>
-
-</li>
-
-
-
-<li>
-<hr className="dropdown-divider"/>
-</li>
-
-
-
-<li>
-
-<Link
-className="dropdown-item"
-to="/profile"
->
-
-👤 My Profile
-
-</Link>
-
-</li>
-
-
-
-
-{
-user?.role === "CONSUMER" &&
-
-<li>
-
-<Link
-className="dropdown-item"
-to="/orders"
->
-
-📦 My Orders
-
-</Link>
-
-</li>
-
-}
-
-
-
-
-<li>
-
-<hr className="dropdown-divider"/>
-
-</li>
-
-
-
-<li>
-
-<button
-className="dropdown-item text-danger"
-onClick={handleLogout}
->
-
-Logout
-
-</button>
-
-</li>
-
-
-
-</ul>
-
+        </div>
+    }
 
 </div>
-
-}
-
-
-</div>
-
 
 </div>
 
