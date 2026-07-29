@@ -1,65 +1,43 @@
 package com.cdac.farmermarketplace.service.impl;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import com.cdac.farmermarketplace.dto.request.PlaceOrderRequest;
 import com.cdac.farmermarketplace.dto.response.OrderItemResponse;
 import com.cdac.farmermarketplace.dto.response.OrderResponse;
-
-
 import com.cdac.farmermarketplace.entity.Cart;
 import com.cdac.farmermarketplace.entity.CartItem;
 import com.cdac.farmermarketplace.entity.Order;
 import com.cdac.farmermarketplace.entity.OrderItem;
 import com.cdac.farmermarketplace.entity.User;
-
-
 import com.cdac.farmermarketplace.enums.OrderStatus;
 import com.cdac.farmermarketplace.enums.PaymentMethod;
-
-
 import com.cdac.farmermarketplace.exception.BadRequestException;
 import com.cdac.farmermarketplace.exception.ResourceNotFoundException;
-
-
 import com.cdac.farmermarketplace.repository.CartItemRepository;
 import com.cdac.farmermarketplace.repository.CartRepository;
 import com.cdac.farmermarketplace.repository.OrderItemRepository;
 import com.cdac.farmermarketplace.repository.OrderRepository;
 import com.cdac.farmermarketplace.repository.UserRepository;
-
-
 import com.cdac.farmermarketplace.service.OrderService;
 
-
 import lombok.RequiredArgsConstructor;
-
-
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-
-
     private final OrderRepository orderRepository;
-
     private final OrderItemRepository orderItemRepository;
-
     private final CartRepository cartRepository;
-
     private final CartItemRepository cartItemRepository;
-
     private final UserRepository userRepository;
 
     @Override
@@ -68,172 +46,83 @@ public class OrderServiceImpl implements OrderService {
             Long userId
     ) {
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
-        // Get logged-in user
-
-        User user =
-                userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "User not found"
-                        )
-                );
-
-        // Get user's cart
-
-        Cart cart =
-                cartRepository.findByUser(user)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Cart not found"
-                        )
-                );
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems =
                 cartItemRepository.findByCart(cart);
 
-        if(cartItems.isEmpty()) {
-
-            throw new BadRequestException(
-                    "Cart is empty"
-            );
-
+        if (cartItems.isEmpty()) {
+            throw new BadRequestException("Cart is empty");
         }
-      BigDecimal subtotal =
-                BigDecimal.ZERO;
 
+        BigDecimal subtotal = BigDecimal.ZERO;
 
-
-        for(CartItem item : cartItems) {
-
-
-            subtotal =
-                    subtotal.add(
-                            item.getTotalPrice()
-                    );
-
+        for (CartItem item : cartItems) {
+            subtotal = subtotal.add(item.getTotalPrice());
         }
 
         BigDecimal tax =
-                subtotal.multiply(
-                        BigDecimal.valueOf(0.18)
-                );
-
-
+                subtotal.multiply(BigDecimal.valueOf(0.18));
 
         BigDecimal totalAmount =
                 subtotal.add(tax);
 
-
-
-
-
-
-
-        Order order =
-                new Order();
-
-
+        Order order = new Order();
 
         order.setUser(user);
-
-
         order.setSubtotal(subtotal);
-
-
         order.setTax(tax);
-
-
         order.setTotalAmount(totalAmount);
 
-
-
         order.setShippingAddress(
-                request.getShippingAddress()
-        );
-
+                request.getShippingAddress());
 
         order.setPincode(
-                request.getPincode()
-        );
-
+                request.getPincode());
 
         order.setMobile(
-                request.getMobile()
-        );
+                request.getMobile());
 
-
-
-        order.setStatus(
-                OrderStatus.PENDING
-        );
-
-
+        order.setStatus(OrderStatus.PENDING);
 
         order.setPaymentMethod(
                 PaymentMethod.valueOf(
-                        request.getPaymentMethod()
-                        .toUpperCase()
+                        request.getPaymentMethod().toUpperCase()
                 )
         );
 
+        order.setOrderDate(LocalDateTime.now());
 
-
-        order.setOrderDate(
-                LocalDateTime.now()
-        );
-
-
-
-        order =
-                orderRepository.save(order);
-
+        order = orderRepository.save(order);
 
         List<OrderItemResponse> responseItems =
                 new ArrayList<>();
 
-        for(CartItem cartItem : cartItems) {
+        for (CartItem cartItem : cartItems) {
 
-
-
-            OrderItem orderItem =
-                    new OrderItem();
-
-
+            OrderItem orderItem = new OrderItem();
 
             orderItem.setOrder(order);
 
-
-
             orderItem.setProduct(
-                    cartItem.getProduct()
-            );
-
-
+                    cartItem.getProduct());
 
             orderItem.setQuantity(
-                    cartItem.getQuantity()
-            );
-
-
+                    cartItem.getQuantity());
 
             orderItem.setPrice(
-                    cartItem.getPrice()
-            );
-
-
+                    cartItem.getPrice());
 
             orderItem.setTotalPrice(
-                    cartItem.getTotalPrice()
-            );
-
-
+                    cartItem.getTotalPrice());
 
             orderItemRepository.save(orderItem);
-
-
-
-
 
             responseItems.add(
 
@@ -250,18 +139,23 @@ public class OrderServiceImpl implements OrderService {
                     )
 
             );
-
         }
 
-        // Clear cart after successful order
+        /*
+         * Clear cart ONLY for COD.
+         * For online payments, cart will be cleared
+         * after successful payment verification.
+         */
+        if (order.getPaymentMethod() == PaymentMethod.COD) {
 
-        cartItemRepository.deleteByCart(cart);
+            cartItemRepository.deleteByCart(cart);
+
+        }
 
         return mapToResponse(
                 order,
                 responseItems
         );
-
     }
 
     @Override
@@ -273,34 +167,20 @@ public class OrderServiceImpl implements OrderService {
 
         Order order =
                 orderRepository.findById(orderId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Order not found"
-                        )
-                );
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Order not found"));
 
-
-
-        // Check if the logged-in user owns this order
         if (!order.getUser().getId().equals(userId)) {
-
             throw new BadRequestException(
-                    "You are not authorized to view this order"
-            );
-
+                    "You are not authorized to view this order");
         }
-
-
 
         List<OrderItem> items =
                 orderItemRepository.findByOrder(order);
 
-
-
         List<OrderItemResponse> responseItems =
                 new ArrayList<>();
-
-
 
         for (OrderItem item : items) {
 
@@ -322,65 +202,39 @@ public class OrderServiceImpl implements OrderService {
 
         }
 
-
-
         return mapToResponse(
                 order,
                 responseItems
         );
-
     }
+
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByUserId(
             Long userId
     ) {
 
-
-
         User user =
                 userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "User not found"
-                        )
-                );
-
-
-
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"));
 
         List<Order> orders =
                 orderRepository.findByUser(user);
 
-
-
-
         List<OrderResponse> responses =
                 new ArrayList<>();
 
-
-
-
-
-        for(Order order : orders) {
-
-
+        for (Order order : orders) {
 
             List<OrderItem> items =
                     orderItemRepository.findByOrder(order);
 
-
-
-
             List<OrderItemResponse> responseItems =
                     new ArrayList<>();
 
-
-
-
-            for(OrderItem item : items) {
-
-
+            for (OrderItem item : items) {
 
                 responseItems.add(
 
@@ -400,9 +254,6 @@ public class OrderServiceImpl implements OrderService {
 
             }
 
-
-
-
             responses.add(
 
                     mapToResponse(
@@ -415,7 +266,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return responses;
-
     }
 
     @Override
@@ -426,15 +276,10 @@ public class OrderServiceImpl implements OrderService {
 
         Order order =
                 orderRepository.findById(orderId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Order not found"
-                        )
-                );
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Order not found"));
 
-
-
-        // Check ownership
         if (!order.getUser().getId().equals(userId)) {
 
             throw new BadRequestException(
@@ -442,8 +287,6 @@ public class OrderServiceImpl implements OrderService {
             );
 
         }
-
-
 
         if (order.getStatus() == OrderStatus.CANCELLED) {
 
@@ -453,8 +296,6 @@ public class OrderServiceImpl implements OrderService {
 
         }
 
-
-
         if (order.getStatus() == OrderStatus.DELIVERED) {
 
             throw new BadRequestException(
@@ -463,16 +304,9 @@ public class OrderServiceImpl implements OrderService {
 
         }
 
-
-
-        order.setStatus(
-                OrderStatus.CANCELLED
-        );
-
-
+        order.setStatus(OrderStatus.CANCELLED);
 
         orderRepository.save(order);
-
     }
 
     private OrderResponse mapToResponse(
@@ -480,37 +314,22 @@ public class OrderServiceImpl implements OrderService {
             List<OrderItemResponse> items
     ) {
 
-
-
         return new OrderResponse(
 
                 order.getId(),
-
                 order.getUser().getId(),
-
                 order.getSubtotal(),
-
                 order.getTax(),
-
                 order.getTotalAmount(),
-
                 order.getShippingAddress(),
-
                 order.getPincode(),
-
                 order.getMobile(),
-
                 order.getStatus(),
-
                 order.getPaymentMethod().name(),
-
                 order.getOrderDate(),
-
                 items
 
         );
-
     }
-
 
 }
