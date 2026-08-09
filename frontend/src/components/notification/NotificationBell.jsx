@@ -188,6 +188,10 @@ function NotificationBell() {
 
               </div>
 
+              <div className="small fw-semibold">
+  Status: {notification.status}
+</div>
+
 
               <div className="small text-muted">
 
