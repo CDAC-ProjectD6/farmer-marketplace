@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cdac.farmermarketplace.dto.request.NotificationRequestDto;
+//import com.cdac.farmermarketplace.dto.request.NotificationRequestDto;
 import com.cdac.farmermarketplace.dto.response.NotificationResponseDto;
 import com.cdac.farmermarketplace.entity.Notification;
+import com.cdac.farmermarketplace.entity.NotificationStatus;
 import com.cdac.farmermarketplace.entity.User;
 import com.cdac.farmermarketplace.repository.NotificationRepository;
 import com.cdac.farmermarketplace.repository.UserRepository;
@@ -32,13 +33,15 @@ public class NotificationServiceImpl implements NotificationService {
     public void createNotification(
             User user,
             String title,
-            String message) {
+            String message,
+            NotificationStatus status) {
 
         Notification notification = new Notification();
 
         notification.setUser(user);
         notification.setTitle(title);
         notification.setMessage(message);
+        notification.setStatus(status);
         notification.setRead(false);
 
         notificationRepository.save(notification);
@@ -150,11 +153,12 @@ public class NotificationServiceImpl implements NotificationService {
             Notification notification) {
 
         return new NotificationResponseDto(
-                notification.getId(),
-                notification.getTitle(),
-                notification.getMessage(),
-                notification.isRead(),
-                notification.getCreatedAt()
+        		 notification.getId(),
+                 notification.getTitle(),
+                 notification.getMessage(),
+                 notification.isRead(),
+                 notification.getCreatedAt(),
+                 notification.getStatus()
         );
     }
 }

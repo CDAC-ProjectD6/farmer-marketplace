@@ -3,6 +3,7 @@ package com.cdac.farmermarketplace.service;
 import java.util.List;
 
 import com.cdac.farmermarketplace.dto.response.NotificationResponseDto;
+import com.cdac.farmermarketplace.entity.NotificationStatus;
 import com.cdac.farmermarketplace.entity.User;
 
 public interface NotificationService {
@@ -11,7 +12,8 @@ public interface NotificationService {
     void createNotification(
             User user,
             String title,
-            String message
+            String message,
+            NotificationStatus status
     );
 
     List<NotificationResponseDto> getUserNotifications(Long userId);

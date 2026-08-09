@@ -1,6 +1,7 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.util.List;
+import com.cdac.farmermarketplace.entity.NotificationStatus;
 import com.cdac.farmermarketplace.service.NotificationService;
 
 import org.springframework.stereotype.Service;
@@ -138,7 +139,8 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
         notificationService.createNotification(
                 savedFarmer,
                 "Farmer Approved",
-                "Congratulations! Your farmer account has been approved."
+                "Congratulations! Your farmer account has been approved.",
+                NotificationStatus.APPROVED
         );
 
         return convertToDto(savedFarmer);
@@ -168,7 +170,8 @@ public class AdminFarmerServiceImpl implements AdminFarmerService {
         notificationService.createNotification(
                 savedFarmer,
                 "Farmer Rejected",
-                "Your farmer account approval request has been rejected."
+                "Your farmer account approval request has been rejected.",
+                NotificationStatus.REJECTED
         );
 
         return convertToDto(savedFarmer);

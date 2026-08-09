@@ -2,6 +2,8 @@ package com.cdac.farmermarketplace.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.cdac.farmermarketplace.entity.NotificationStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +24,6 @@ public class NotificationResponseDto {
     private boolean read;
 
     private LocalDateTime createdAt;
+    
+    private NotificationStatus status;
 }
