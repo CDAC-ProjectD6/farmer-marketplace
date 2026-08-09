@@ -1,0 +1,202 @@
+FARMER MARKETPLACE
+
+Farmer Marketplace is an online marketplace application that connects farmers
+directly with customers.
+
+Farmers can register on the platform and offer agricultural products for sale.
+
+Customers can browse available products and purchase products from registered
+farmers.
+
+
+CUSTOMER REGISTRATION
+
+Customers can create an account using the Create Account page.
+
+To register as a customer:
+
+1. Open the Create Account registration page.
+2. Enter the full name.
+3. Enter the email address.
+4. Enter the mobile number.
+5. Select "Consumer" in the "Register As" field.
+6. Enter a password.
+7. Confirm the password.
+8. Click "Create Account".
+
+The password must contain at least 8 characters.
+
+The password and confirm password fields must match.
+
+After successful registration, the user is redirected to the Login page.
+
+
+FARMER REGISTRATION
+
+Users can register as farmers.
+
+To register as a farmer:
+
+1. Open the Create Account registration page.
+2. Enter the full name.
+3. Enter the email address.
+4. Enter the mobile number.
+5. Select "Farmer" in the "Register As" field.
+6. Enter a password.
+7. Confirm the password.
+8. Click "Create Account".
+
+The password must contain at least 8 characters.
+
+The password and confirm password fields must match.
+
+After successful registration, the user is redirected to the Login page.
+
+A newly registered farmer may have an approval status of PENDING.
+
+
+FARMER APPROVAL
+
+Administrators can review farmer registrations.
+
+A farmer can have one of the following approval statuses:
+
+- PENDING
+- APPROVED
+- REJECTED
+
+PENDING means the farmer registration is waiting for administrator review.
+
+APPROVED means the administrator has approved the farmer.
+
+REJECTED means the administrator has rejected the farmer registration.
+
+
+USER ROLES
+
+The application supports three main user roles:
+
+CONSUMER:
+Consumers can browse products, view product details, add products to their cart,
+manage wishlist items, purchase available products, and view their orders.
+
+FARMER:
+Farmers can manage their products and view orders related to their products.
+
+ADMIN:
+Administrators can manage categories, users, farmers, products, and orders.
+Administrators can also review and manage farmer approval requests.
+
+
+CUSTOMER FEATURES
+
+Customers can:
+
+- Browse products
+- Search products by name
+- Browse products by category
+- View product details
+- View product price
+- View product stock availability
+- View product brand
+- View the farmer associated with a product
+- Add products to the shopping cart
+- Add products to the wishlist
+- Purchase available products
+- View their orders
+
+
+FARMER FEATURES
+
+Farmers can:
+
+- View their products
+- Add products
+- Edit products
+- View farmer orders
+- View farmer order details
+
+Farmers must be approved according to the application's farmer approval process
+before they are treated as approved farmers.
+
+
+ADMIN FEATURES
+
+Administrators can:
+
+- Access the admin dashboard
+- Manage categories
+- Manage users
+- Manage farmers
+- Review farmer approval
+- Manage products
+- Manage orders
+
+
+MARKETPLACE CATEGORIES
+
+The marketplace supports agricultural product categories.
+
+Known marketplace categories include:
+
+- Vegetables
+- Fruits
+- Dairy
+- Spices
+- Grains
+
+Customers can browse and filter products according to available categories.
+
+
+PRODUCT INFORMATION
+
+Products may contain:
+
+- Product ID
+- Product name
+- Description
+- Price
+- Stock
+- Brand
+- Image
+- Category
+- Farmer
+- Average rating
+- Review count
+- Active status
+- Created date
+- Updated date
+
+Product availability depends on the stock maintained by the farmer.
+
+
+SHOPPING CART
+
+Customers can add available products to their shopping cart.
+
+The marketplace information does not define payment methods, shipping policies,
+delivery times, or refund policies.
+
+
+WISHLIST
+
+Customers can maintain a wishlist of products they are interested in.
+
+
+ORDERS
+
+Customers can view their orders and order details.
+
+Farmers can view orders related to their products.
+
+Administrators can manage and view orders.
+
+
+MARKETMATE
+
+MarketMate is the AI assistant for Farmer Marketplace.
+
+MarketMate helps customers interact with the marketplace using natural language.
+
+MarketMate can answer general questions about Farmer Marketplace and explain
+available marketplace features.
