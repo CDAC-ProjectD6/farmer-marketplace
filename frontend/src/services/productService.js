@@ -88,12 +88,14 @@ export const getProductsByCategory = async (categoryId) => {
 // =========================
 // PRODUCTS BY CATEGORY NAME
 // =========================
-export const getProductsByCategoryName = async (categoryName) => {
-  const response = await api.get(
-    `/products/category/name/${categoryName}`
-  );
 
-  return response.data;
+export const getProductsByCategoryName = async (categoryName) => {
+
+    const response = await api.get(
+        `/products/category/name/${encodeURIComponent(categoryName)}`
+    );
+
+    return response.data;
 };
 
 // =========================

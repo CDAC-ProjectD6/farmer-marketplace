@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../../components/Product/ProductCard";
 import ProductFilter from "../../components/Product/ProductFilter";
 
@@ -15,26 +15,47 @@ import {
 } from "../../services/categoryService";
 
 function Products() {
+  const [searchParams] = useSearchParams();
+
+  const categoryFromUrl = searchParams.get("category");
+
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    loadData();
-  }, []);
+  loadData();
+}, [categoryFromUrl]);
 
   const loadData = async () => {
-    try {
-      const productData = await getAvailableProducts();
-      const categoryData = await getActiveCategories();
+  try {
 
-      setProducts(productData);
-      setFilteredProducts(productData);
-      setCategories(categoryData);
-    } catch (error) {
-      console.error("Error loading products:", error);
+    let productData;
+
+    if (categoryFromUrl) {
+
+      productData = await getProductsByCategoryName(
+        categoryFromUrl
+      );
+
+    } else {
+
+      productData = await getAvailableProducts();
+
     }
-  };
+
+    const categoryData = await getActiveCategories();
+
+    setProducts(productData);
+    setFilteredProducts(productData);
+    setCategories(categoryData);
+
+  } catch (error) {
+
+    console.error("Error loading products:", error);
+
+  }
+};
 
   // ==========================
   // SEARCH PRODUCTS
