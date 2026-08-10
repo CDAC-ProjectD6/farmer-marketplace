@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import ProductCard from "../../components/Product/ProductCard";
 import ProductFilter from "../../components/Product/ProductFilter";
@@ -12,34 +13,54 @@ import {
   getProductByName,
 } from "../../services/productService";
 
-import {
-  getActiveCategories,
-} from "../../services/categoryService";
+import { getActiveCategories } from "../../services/categoryService";
 
 function Products() {
+  const [searchParams] = useSearchParams();
+
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
+  // ==========================
+  // LOAD PRODUCTS
+  // ==========================
   useEffect(() => {
     loadData();
-  }, []);
+  }, [searchParams]);
 
   const loadData = async () => {
     try {
+      // Get all available products
       const productData = await getAvailableProducts();
+
+      // Get active categories
       const categoryData = await getActiveCategories();
 
       setProducts(productData);
-      setFilteredProducts(productData);
       setCategories(categoryData);
+
+      // Get category from URL
+      const categoryName = searchParams.get("category");
+
+      if (categoryName) {
+        // Category came from Categories page
+        const categoryProducts =
+          await getProductsByCategoryName(categoryName);
+
+        setFilteredProducts(categoryProducts);
+      } else {
+        // Normal /products page
+        setFilteredProducts(productData);
+      }
     } catch (error) {
       console.error("Error loading products:", error);
+      setFilteredProducts([]);
     }
   };
 
   // ==========================
-  // SEARCH PRODUCTS (Keyword)
+  // SEARCH PRODUCTS (KEYWORD)
   // ==========================
   const handleSearch = async (keyword) => {
     if (!keyword || !keyword.trim()) {
@@ -52,6 +73,7 @@ function Products() {
       setFilteredProducts(data);
     } catch (error) {
       console.error("Search failed:", error);
+      setFilteredProducts([]);
     }
   };
 
@@ -66,9 +88,13 @@ function Products() {
 
     try {
       const data = await getProductByName(name);
-      setFilteredProducts(data ? (Array.isArray(data) ? data : [data]) : []);
+
+      setFilteredProducts(
+        data ? (Array.isArray(data) ? data : [data]) : []
+      );
     } catch (error) {
       console.error("Product name search failed:", error);
+      setFilteredProducts([]);
     }
   };
 
@@ -83,9 +109,11 @@ function Products() {
 
     try {
       const data = await getProductsByCategoryName(categoryName);
+
       setFilteredProducts(data);
     } catch (error) {
       console.error("Category name filter failed:", error);
+      setFilteredProducts([]);
     }
   };
 
@@ -107,6 +135,7 @@ function Products() {
       setFilteredProducts(data);
     } catch (error) {
       console.error("Price filter failed:", error);
+      setFilteredProducts([]);
     }
   };
 
@@ -121,9 +150,11 @@ function Products() {
 
     try {
       const data = await getProductsByStock(stockValue);
+
       setFilteredProducts(data);
     } catch (error) {
       console.error("Stock filter failed:", error);
+      setFilteredProducts([]);
     }
   };
 
@@ -131,7 +162,7 @@ function Products() {
   // SORT
   // ==========================
   const handleSort = (sort) => {
-    let sorted = [...filteredProducts];
+    const sorted = [...filteredProducts];
 
     switch (sort) {
       case "low":
@@ -143,7 +174,9 @@ function Products() {
         break;
 
       case "name":
-        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        sorted.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         break;
 
       default:
@@ -153,13 +186,22 @@ function Products() {
     setFilteredProducts(sorted);
   };
 
+  // ==========================
+  // RESET FILTERS
+  // ==========================
+  const handleReset = () => {
+    loadData();
+  };
+
   return (
     <div className="container py-4">
 
+      {/* PAGE TITLE */}
       <h2 className="fw-bold mb-4">
         Fresh Farm Products
       </h2>
 
+      {/* FILTERS */}
       <ProductFilter
         categories={categories}
         onSearch={handleSearch}
@@ -168,9 +210,11 @@ function Products() {
         onPriceChange={handlePrice}
         onStockChange={handleStockFilter}
         onSortChange={handleSort}
+        onReset={handleReset}
       />
 
-      <div className="row">
+      {/* PRODUCTS */}
+      <div className="row mt-4">
 
         {filteredProducts.length === 0 ? (
 

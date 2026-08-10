@@ -7,6 +7,7 @@ import {
   getAvailableProducts,
   searchProducts,
   getProductsByCategory,
+  getProductsByCategoryName,
   getProductsByPriceRange,
 } from "../../services/productService";
 

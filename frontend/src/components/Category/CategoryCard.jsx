@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "./CategoryCard.css";
 
 const categoryImages = {
@@ -14,6 +15,8 @@ const categoryImages = {
 };
 
 const CategoryCard = ({ category }) => {
+  const navigate = useNavigate();
+
   const imageUrl =
     categoryImages[category.name] ||
     "/categoryImage/organic.jpeg";
@@ -33,7 +36,9 @@ const CategoryCard = ({ category }) => {
 
       <button
         className="btn btn-success"
-        onClick={() => console.log(category.name)}
+        onClick={() =>
+          navigate(`/products?category=${category.name}`)
+        }
       >
         Browse Products
       </button>

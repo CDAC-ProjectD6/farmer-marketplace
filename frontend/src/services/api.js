@@ -48,12 +48,13 @@ api.interceptors.response.use(
 
         const data = response.data;
 
-        // Backend returns new access + refresh tokens
+        // Save new access token
         localStorage.setItem(
           "accessToken",
           data.accessToken
         );
 
+        // Save new refresh token
         localStorage.setItem(
           "refreshToken",
           data.refreshToken
@@ -66,6 +67,7 @@ api.interceptors.response.use(
         return api(originalRequest);
 
       } catch (refreshError) {
+        // Clear stored authentication data
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("userId");
