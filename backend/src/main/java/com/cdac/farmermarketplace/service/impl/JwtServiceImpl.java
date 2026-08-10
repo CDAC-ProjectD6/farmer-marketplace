@@ -1,6 +1,8 @@
 package com.cdac.farmermarketplace.service.impl;
 
 import java.nio.charset.StandardCharsets;
+
+//create jwt and read and validate JWT
 import java.util.Date;
 
 import javax.crypto.SecretKey;

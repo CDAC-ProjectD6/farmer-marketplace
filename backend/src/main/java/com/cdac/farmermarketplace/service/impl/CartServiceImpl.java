@@ -209,6 +209,14 @@ public class CartServiceImpl implements CartService {
             response.setProductId(
                     item.getProduct().getId()
             );
+            
+            response.setProductName(
+                    item.getProduct().getName()
+            );
+
+            response.setImageUrl(
+                    item.getProduct().getImageUrl()
+            );
 
 
             response.setQuantity(

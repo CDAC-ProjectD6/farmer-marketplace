@@ -17,6 +17,10 @@ public class CartItemResponse {
 
     private Long productId;
 
+    private String productName;
+
+    private String imageUrl;
+
     private Integer quantity;
 
     private BigDecimal price;

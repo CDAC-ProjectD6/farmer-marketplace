@@ -160,7 +160,9 @@ public class ProductServiceImpl implements ProductService {
 
         product.setCategory(category);
 
-        product.setActive(requestDto.getActive());
+        if (requestDto.getActive() != null) {
+            product.setActive(requestDto.getActive());
+        }
 
 
 
