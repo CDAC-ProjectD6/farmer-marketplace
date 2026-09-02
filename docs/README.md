@@ -54,7 +54,7 @@ docs/
 - Aishwarya
 - Bhagyashree
 - Prajakta
-- Shamli
+- Shyamli
 
 ---
 
